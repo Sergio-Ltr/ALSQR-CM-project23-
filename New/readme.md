@@ -1,7 +1,8 @@
 New stuff :)
 
-- new qr factorization (da migliorare ancora) 
-- new houseolder vector 
-- new Approximate U
-- new Approximate V
-- new solver for counting residual error at each iterative step
+- qr factorization (da migliorare ancora) 
+- houseolder vector 
+- Approximate U
+- Approximate V
+- solver for counting residual error at each iterative step
+- NEW optimal k function for compare our error with svd error
