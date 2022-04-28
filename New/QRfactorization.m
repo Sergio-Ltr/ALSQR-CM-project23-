@@ -23,12 +23,13 @@ for i = 1:min(m-1, last) %  m-1 because last iteration (i = m) is useless
 end
 R = A;
 
+%{
 % Thin QR factorization (if m >> n)
 if m > n
     Q = Q(:, 1:n);
     R = R(1:n, :);
 end
-
+%}
 
 %{
 FATTO:

@@ -1,11 +1,18 @@
 function [V] = ApproximateV (A, U)
 
-[~, k] = size (U);  % U size = m x k
+[m, k] = size (U);  % U size = m x k
 [~, n]  = size (A); % A size = m x n
 
 Vt = zeros(k,n);
 
 [Q, R] = QRfactorization(U);
+
+%[Q,R] = qr(U);
+if m > k
+    Q = Q(:, 1:k);
+    R = R(1:k, :);
+end
+
 
 for i = 1:n
     a = A(:, i);
