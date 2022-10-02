@@ -1,18 +1,14 @@
-function [V] = ApproximateV (A, U)
+function [V, err] = ApproximateV (A, U)
 
-[m, k] = size (U);  % U size = m x k
+[m, k] = size (U)  % U size = m x k
 [~, n]  = size (A); % A size = m x n
 
 Vt = zeros(k,n);
 
-[Q, R] = QRfactorization(U);
+[Q, R] = ThinQRfactorization(U);
 
 %[Q,R] = qr(U);
-if m > k
-    Q = Q(:, 1:k);
-    R = R(1:k, :);
-end
-
+%[Q,R] = QRfactorization(U)
 
 for i = 1:n
     a = A(:, i);
@@ -21,19 +17,5 @@ for i = 1:n
 end
 V = Vt';
 
-%{
-function [V] = ApproximateV (A, U)
-% V' size -> k x n 
-[m, n] = size (A);
-k = lenght(U(1));
- 
-V = zeros(m,k); % create V as zero matrix and then progressive replace columnn
-
-[Q, R] = QRfactorization(U);
-
-for i = n
-    b = A(:, i);
-    x = R\(Q'*b);
-    V(:,i) = x;
-end
-%}
+% to do: use q2 when we have thin QR
+err = norm(A-U*V', "fro");
