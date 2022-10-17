@@ -1,7 +1,12 @@
-function [V, err] = ApproximateV (A, U)
+function [V, err] = ApproximateV (A, U, regularization, lambda)
 
-[m, k] = size (U)  % U size = m x k
-[~, n]  = size (A); % A size = m x n
+[m, k] = size (U);  % U size = m x k
+[~, n]  = size (A); 
+
+if regularization == true
+    U = [U; lambda * eye(k)];
+    A = [A; zeros(k,n)]; 
+end
 
 Vt = zeros(k,n);
 

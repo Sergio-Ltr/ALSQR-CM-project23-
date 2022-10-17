@@ -1,4 +1,4 @@
-function [U, V] = Solver2 (A, k, intial_V_constraint ,verbose)
+function [U, V] = Solver (A, k, intial_V_constraint ,verbose)
 
 m = size(A,1);
 n = size(A,2);
@@ -17,25 +17,35 @@ else
   verbose = 0;
 end
 
+% ---- Tikonov regularization hyper-parameter (lambda_u, lamda_v) 
+regularization = true; % false = no regularization performed
+lambda_u = 0.005;
+lambda_v = 0.005;
+
 V = init;
 
-residual_step_1 = zeros(50,1);
-residual_step_2 = zeros(50,1);
+max_epoch = 100; % max num. of iterations
 
-convergence_u_story = zeros(50,1);
-convergence_v_story = zeros(50,1);
+residual_step_1 = zeros(max_epoch,1);
+residual_step_2 = zeros(max_epoch,1);
 
-u_norm_story = zeros(50,1);
-v_norm_story = zeros(50,1);
+convergence_u_story = zeros(max_epoch,1);
+convergence_v_story = zeros(max_epoch,1);
+
+u_norm_story = zeros(max_epoch,1);
+v_norm_story = zeros(max_epoch,1);
 
 u_err_prev = 1;
 v_err_prev = 1;
 
-for i = 1:100 % choose numer of iteration 
-    % --> next: insert stop condition when residual error is under a given treshold
-    [U,u_err] = ApproximateU(A, V);
-    [V,v_err] = ApproximateV(A, U);
-    %temp_error = A - U*V';
+U_list = cell(max_epoch, 1);
+V_list = cell(max_epoch, 1);
+
+for i = 1:max_epoch 
+    
+    [U,u_err] = ApproximateU(A, V, regularization, lambda_u);
+    [V,v_err] = ApproximateV(A, U, regularization, lambda_v);
+    
     residual_step_1(i) = u_err;
     residual_step_2(i) = v_err;
 
@@ -47,8 +57,16 @@ for i = 1:100 % choose numer of iteration
 
     u_err_prev = u_err;
     v_err_prev = v_err;
+    
+    U_list{i} = U;
+    V_list{i} = V;
+    [stop] = StoppingCriteria(i, max_epoch, A, U_list, V_list, "local");
+    if stop == true
+        disp("Early stopping at epoch")
+        disp(i)
+        break
+    end
 
-    % next -> preallocating residual_error for faster execution
 end
 
 % Top two plots
