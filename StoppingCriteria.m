@@ -1,4 +1,4 @@
-function [stop] = StoppingCriteria (i, max_i, A, U, V, criteria)
+function [stop, local_stooping_active] = StoppingCriteria (i, max_i, rel_err, convergence_rate, criteria, local_stooping_active)
 
 % ----- STOPPING CRITERIA (SC) -----
 
@@ -7,10 +7,10 @@ stop = false;
 if criteria == "global" % -------- >(SC 1): GLOBAL CASE 
     
     % set e-precision costant
-    e_SC1 = 0.0000001;
+    e_SC1 = 0.000001;
 
     % SC1 montior relative error
-    rel_err = norm(A - U{i}*V{i}', "fro")/ norm(A, "fro");
+    %rel_err = norm(A - U{i}*V{i}', "fro")/ norm(A, "fro");
     
     % SC1 stopping conditions
     if rel_err <= e_SC1 && i < max_i
@@ -20,9 +20,19 @@ if criteria == "global" % -------- >(SC 1): GLOBAL CASE
 elseif criteria == "local" % -------> (SC 2): LOCAL CASE 
     
     % set e-treshold costant and patience
-    e_SC2 = 0.0000001;
-    patience = 3;
+    e_SC2 = 1e-9;
+    patience = 50;
+   
 
+    if convergence_rate < e_SC2
+        local_stooping_active = local_stooping_active + 1; 
+        stop = local_stooping_active >=  patience;
+    else
+        local_stooping_active = 0;
+    end
+
+    
+    %{
     % initialize a sliding window (sw) of lenght = patience
     sw = zeros(1,patience);
 
@@ -41,6 +51,7 @@ elseif criteria == "local" % -------> (SC 2): LOCAL CASE
     if i >= 4 && all(sw<= e_SC2)
         stop = true;
     end
+    %}
 
 else
     disp("Stopping criteria not valid")

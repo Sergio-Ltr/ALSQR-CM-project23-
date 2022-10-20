@@ -19,12 +19,12 @@ end
 
 % ---- Tikonov regularization hyper-parameter (lambda_u, lamda_v) 
 regularization = true; % false = no regularization performed
-lambda_u = 0.005;
-lambda_v = 0.005;
+lambda_u = 0.1;
+lambda_v = 0.1;
 
 V = init;
 
-max_epoch = 100; % max num. of iterations
+max_epoch = 1000; % max num. of iterations
 
 residual_step_1 = zeros(max_epoch,1);
 residual_step_2 = zeros(max_epoch,1);
@@ -38,8 +38,11 @@ v_norm_story = zeros(max_epoch,1);
 u_err_prev = 1;
 v_err_prev = 1;
 
-U_list = cell(max_epoch, 1);
-V_list = cell(max_epoch, 1);
+%U_list = cell(max_epoch, 1);
+%V_list = cell(max_epoch, 1);
+
+% early stooping parameter;
+local_stop = 0; 
 
 for i = 1:max_epoch 
     
@@ -58,15 +61,22 @@ for i = 1:max_epoch
     u_err_prev = u_err;
     v_err_prev = v_err;
     
-    U_list{i} = U;
-    V_list{i} = V;
-    [stop] = StoppingCriteria(i, max_epoch, A, U_list, V_list, "local");
-    if stop == true
-        disp("Early stopping at epoch")
-        disp(i)
-        break
+    if i>1
+        rel_err = v_err/norm(A, "fro");
+        convergence_rate = norm(U_prev*V_prev' - U*V', "fro") / norm(U_prev*V_prev', "fro");
+    
+        [stop, local_stop] = StoppingCriteria(i, max_epoch, rel_err, convergence_rate, "local", local_stop);
+        if stop == true
+            disp("Early stopping at epoch")
+            disp(i)
+            break
+        end
     end
 
+
+    U_prev = U;
+    V_prev = V;
+   
 end
 
 % Top two plots
@@ -93,6 +103,9 @@ title('V-norm')
 optimalError = optimalK(A, k)
 residual_step_2(50)
 
+norm(A*A' - U*U', "fro")
+
+norm(A'*A - V*V', "fro")
 %{
 NB. dopo poche iterazioni i<10) l'errore smette di diminuire
 controllare tutto per individuare possibili errori
