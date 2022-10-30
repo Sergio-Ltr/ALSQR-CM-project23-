@@ -1,13 +1,18 @@
-function [stop, local_stooping_active] = StoppingCriteria (i, max_i, rel_err, convergence_rate, criteria, local_stooping_active)
+function [stop, local_stooping_active] = StoppingCriteria (i, parameter, rel_err, convergence_rate, criteria, local_stooping_active)
 
 % ----- STOPPING CRITERIA (SC) -----
 
 stop = false;
 
+max_i = parameter(1);
+e_SC1 = parameter(2);
+e_SC2 = parameter(3);
+patience = parameter(4); 
+
 if criteria == "global" % -------- >(SC 1): GLOBAL CASE 
     
     % set e-precision costant
-    e_SC1 = 0.000001;
+    % e_SC1 = 0.000001;
 
     % SC1 montior relative error
     %rel_err = norm(A - U{i}*V{i}', "fro")/ norm(A, "fro");
@@ -20,8 +25,8 @@ if criteria == "global" % -------- >(SC 1): GLOBAL CASE
 elseif criteria == "local" % -------> (SC 2): LOCAL CASE 
     
     % set e-treshold costant and patience
-    e_SC2 = 1e-9;
-    patience = 50;
+    %e_SC2 = 1e-9;
+    %patience = 50;
    
 
     if convergence_rate < e_SC2
