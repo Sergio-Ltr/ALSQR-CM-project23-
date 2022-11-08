@@ -1,24 +1,17 @@
-function [U, V, l] = Solver (A, k, reg_parameter, stop_condition, intial_V_constraint, verbosity)
+function [U, V, l] = Solver (A, k, reg_parameter, stop_condition,intial_V_constraint, verbose)
 
 m = size(A,1);
 n = size(A,2);
 
-%Initialization of the V_0 matrix. 
 if nargin > 4
-    if intial_V_constraint == 4
-            V = randn(n,k); % = Vo (starting point) 
-    elseif  intial_V_constraint == 3
-            V = randn(n,k); % = Vo (starting point) 
-    elseif  intial_V_constraint == 2
-            V = randn(n,k); % = Vo (starting point) 
-    elseif  intial_V_constraint == 1
-            V = randn(n,k); % = Vo (starting point) 
-    end
-else % intial_V_constraint = 0;
-    V = randn(n,k); % = Vo (starting point)  
+    intial_V_constraint = 1; %To be used to test particular initializations
+    init = randn(n,k); % = Vo (starting point) 
+else
+    intial_V_constraint = 0;
+    init = randn(n,k); % = Vo (starting point)  
 end
 
-if nargin > 5 && verbosity
+if nargin > 5
   verbose = 1;
 else
   verbose = 0;
@@ -29,7 +22,10 @@ regularization = reg_parameter(1); % false = no regularization performed
 lambda_u = reg_parameter(2);
 lambda_v = reg_parameter(3);
 
+V = init;
+
 max_epoch = stop_condition(1);
+
 
 
 residual_step_1 = zeros(max_epoch,1);
@@ -87,7 +83,27 @@ for i = 1:max_epoch
 end
 
 if verbose
-    Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ])
+    Plotter([residual_step_1, residual_step_2], [convergence_u_story, convergence_v_story], [u_norm_story,v_norm_story ])
+    % Top two plots
+    tiledlayout(3,2)
+    nexttile
+    plot(residual_step_1)
+    title('residual step 1')
+    nexttile
+    plot(residual_step_2)
+    title('residual step 2')
+    nexttile
+    plot(convergence_u_story)
+    title('convergence U')
+    nexttile
+    plot(convergence_v_story)
+    title('convergence V')
+    nexttile
+    plot(u_norm_story)
+    title(' U-norm')
+    nexttile
+    plot(v_norm_story)
+    title('V-norm')
 end
 
 
@@ -96,7 +112,7 @@ end
 
 %norm(A*A' - U*U', "fro")
 
-%norm(A'*A - V*V', "fro")git
+%norm(A'*A - V*V', "fro")
 %{
 NB. dopo poche iterazioni i<10) l'errore smette di diminuire
 controllare tutto per individuare possibili errori
