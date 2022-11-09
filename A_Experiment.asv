@@ -1,0 +1,50 @@
+
+function [value2test] = A_Experiment (experiment)
+
+%{ 
+Experiment on A matrix: 
+---> Choose one of the possibile experiment values 
+
+(1) Experimens wrt A properties:
+
+    sparsity
+    distribution
+    simmetry
+
+(2) Experimens wrt A shapes:
+
+    tall_thin_experiment
+    short_fat_experiment
+    almost_square_experiment
+    square_experiment
+    decreasing_rank_experiment
+%}
+
+value2test = containers.Map;
+
+if experiment == "sparsity_experiment"
+    
+    value2test('type') = experiment;
+    value2test('m_range') = [10:10:30];
+    value2test('n_range')  = [10:10:30];
+    value2test('k_range')  = [25:25:250];
+    value2test('k_limits') = [2,5,10];
+    value2test('d_range')  = 0.5:0.25:1; 
+    value2test('reg_parameter')  = [false, 1, 1];
+    value2test('stop_parameter') = [100, 10e-3, 10e-5, 10];
+
+    ExecuteExperiment(value2test);
+    %PlotExperiment(experiment+'.csv') 
+
+elseif experiment == "distribution_experiment"
+elseif experiment == "simmetry_experiment"
+elseif experiment == "tall_thin_experiment"
+elseif experiment == "short_fat_experiment"
+elseif experiment == "almost_square_experiment"
+elseif experiment == "square_experiment"
+elseif experiment == "decreasing_rank_experiment"
+
+else
+    fprintf("Experiment type is not well-defined")
+end 
+
