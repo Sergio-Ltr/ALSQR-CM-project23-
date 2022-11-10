@@ -1,4 +1,4 @@
-function [U, V, l] = Solver (A, k, reg_parameter, stop_condition, intial_V_constraint, verbosity)
+function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_condition, intial_V_constraint, verbosity)
 
 m = size(A,1);
 n = size(A,2);
@@ -85,6 +85,9 @@ end
 if verbose
     Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ])
 end
+
+last_cr_v = convergence_v_story(l);
+last_rs_v = residual_step_2(l);
 
 
 %optimalError = optimalK(A, k)

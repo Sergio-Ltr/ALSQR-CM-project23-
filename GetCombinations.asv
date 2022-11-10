@@ -17,12 +17,12 @@ combinations = {};
 i = 0;
 for m = m_range
     for n = n_range
-        for k = cat(2, k_limits, k_min: k_stride: min(max(m,n), k_max))
+        %for k = cat(2, k_limits, k_min: k_stride: min(min(m,n), k_max))
+        [k_range, len_k_range] = generateKrange(m,n, cat(1, k_limits, k_stride, k_max);
+        for k = k_range
             for d = d_range
-                % define a single combination
-                comb = [m, n, k, d, stop, reg];
-                % add it to the list of all possible combinations
-                combinations(i,:) = comb;
+                % add a single combination  to the list of all possible combinations
+                combinations{end +1 } = [m, n, k, d, stop, reg];
                 i= i+1;
             end
         end
