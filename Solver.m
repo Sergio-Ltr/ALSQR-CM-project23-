@@ -25,9 +25,8 @@ else
 end
 
 % ---- Tikonov regularization hyper-parameter (lambda_u, lamda_v) 
-regularization = reg_parameter(1); % false = no regularization performed
-lambda_u = reg_parameter(2);
-lambda_v = reg_parameter(3);
+lambda_u = reg_parameter(1);
+lambda_v = reg_parameter(2);
 
 max_epoch = stop_condition(1);
 
@@ -44,19 +43,16 @@ v_norm_story = zeros(max_epoch,1);
 u_err_prev = 1;
 v_err_prev = 1;
 
-%U_list = cell(max_epoch, 1);
-%V_list = cell(max_epoch, 1);
-
 % early stooping parameter;
 local_stop = 0; 
 l = max_epoch;
 for i = 1:max_epoch
     
-    [U,u_err] = ApproximateU(A, V, regularization, lambda_u);
-    [V,v_err] = ApproximateV(A, U, regularization, lambda_v);
+    [U,u_err] = ApproximateU(A, V, lambda_u);
+    [V,v_err] = ApproximateV(A, U, lambda_v);
     
-    residual_step_1(i) = u_err;
-    residual_step_2(i) = v_err;
+    residual_step_1(i) = u_err/norm(A, "fro");
+    residual_step_2(i) = v_err/norm(A, "fro");
 
     convergence_u_story(i) = u_err/u_err_prev;
     convergence_v_story(i) = v_err/v_err_prev;
@@ -96,7 +92,7 @@ end
 
 %norm(A*A' - U*U', "fro")
 
-%norm(A'*A - V*V', "fro")git
+%norm(A'*A - V*V', "fro")
 %{
 NB. dopo poche iterazioni i<10) l'errore smette di diminuire
 controllare tutto per individuare possibili errori

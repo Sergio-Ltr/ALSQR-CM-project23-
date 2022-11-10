@@ -14,7 +14,7 @@ time_repetita = 5;
 [~, tot_combinations] = size(combs);
 
 % total number of executions 
-%tot_executions = time_repetita * tot_combinations
+tot_executions = time_repetita * tot_combinations
 
 
 for j = 1:tot_combinations
@@ -24,7 +24,7 @@ for j = 1:tot_combinations
     n = combs{j}(2);
     k = combs{j}(3);
     d = combs{j}(4);
-    reg_parameter  = [combs{j}(9),combs{j}(10), combs{j}(11)];
+    reg_parameter  = [combs{j}(9),combs{j}(10)];
     stop_parameter = [combs{j}(5),combs{j}(6), combs{j}(7), combs{j}(8)];
     
     % inizialize variable for analyze required time and obtained solution 
@@ -52,7 +52,7 @@ for j = 1:tot_combinations
         err = norm(A-U*V', "fro");               
         precision(i) = err - optimal_err;
     end
-    dlmwrite('temp.csv',[j, m,n,k,d, mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision)],'delimiter',',','-append');
+    dlmwrite('temp.csv',[j, m,n,k,d, reg_parameter(1), reg_parameter(2), mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision)],'delimiter',',','-append');
 end
 
 % read data from temp.csv and delete its content
@@ -60,10 +60,8 @@ data = csvread('temp.csv');
 fclose(fopen('temp.csv','w'));
 
 % define final 
-textHeader = '"id","m_size", "n_size", "k_rank", "density", "last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std"';
+textHeader = '"id","m_size", "n_size", "k_rank", "density", "lambda_u", "lambda_v", "last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std"';
 fid = fopen(type+'_experiments.csv','w'); 
 fprintf(fid,'%s\n',textHeader);
 fclose(fid);
 dlmwrite(type+'_experiments.csv',data, '-append');
-
-

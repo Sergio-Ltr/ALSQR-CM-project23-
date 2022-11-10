@@ -32,7 +32,7 @@ if experiment == "sparsity"
     value2test('k_stride') = 8;
     value2test('k_limits') = [2];
     value2test('d_range')  = 0.5:0.5:1; 
-    value2test('reg_parameter')  = [false, 1, 1];
+    value2test('reg_parameter')  = [1, 1];
     value2test('stop_parameter') = [100, 10e-3, 10e-5, 10];
     
     %[comb] = GetCombinations(value2test);
@@ -40,6 +40,7 @@ if experiment == "sparsity"
     %PlotExperiment(experiment+'.csv') 
 
 elseif experiment == "distribution"
+
 elseif experiment == "simmetry"
 elseif experiment == "tall_thin"
 elseif experiment == "short_fat"

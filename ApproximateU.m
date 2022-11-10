@@ -1,9 +1,9 @@
-function [U, err] = ApproximateU (A, V, regularization, lambda)
+function [U, err] = ApproximateU (A, V, lambda)
 
 [n, k] = size (V);   % V size = n x k (now is not transpose)
 [m, ~]  = size (A); % A size = m x n 
 
-if regularization == true
+if lambda ~= 0  
     V = [V; lambda * eye(k)]; % reg. V size= (n+k)x k 
     A = [A, zeros(m,k)];  % reg. V size= m x (n+k)
 end
