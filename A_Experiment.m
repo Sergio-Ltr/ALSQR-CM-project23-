@@ -50,7 +50,7 @@ elseif experiment == "shape"
     value2test('k_limits') = [2];
     value2test('d_range')  = [1]; 
     value2test('reg_parameter')  = [1, 1];
-    value2test('stop_parameter') = [100, 0, 0, 0];
+    value2test('stop_parameter') = [100, 0, 0, 10]; % non inizializzare patience uguale a 0 perchè vuol dire che si interrompe subito l'esecuzione  (vuol dire patience esaurita)  
 
     ExecuteExperiment(value2test);
 

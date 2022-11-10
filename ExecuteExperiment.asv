@@ -8,58 +8,64 @@ type = values('type');
 combs = GetCombinations(values);
 
 % repeat each combination 5 times
-time_repetita = 5; 
+time_repetita = 1; 
 
 % total number of considered combinations
 [~, tot_combinations] = size(combs);
 
 % total number of executions 
-%tot_executions = time_repetita * tot_combinations
+tot_executions = time_repetita * tot_combinations
 
+h = waitbar(0,'Start executing'+type+'esperiment');
 
 for j = 1:tot_combinations
-
+    waitbar(j/tot_combinations, )
     % get values from a given combination
     m = combs{j}(1);
     n = combs{j}(2);
     k = combs{j}(3);
     d = combs{j}(4);
-    reg_parameter  = [combs{j}(9),combs{j}(10), combs{j}(11)];
+    reg_parameter  = [combs{j}(9),combs{j}(10)];
     stop_parameter = [combs{j}(5),combs{j}(6), combs{j}(7), combs{j}(8)];
     
-    % inizialize 
+    % inizialize variable for analyze required time and obtained solution 
     tot_time_elapsed = zeros(time_repetita,1);
     epoch_time_elapsed = zeros(time_repetita,1);
     precision = zeros(time_repetita,1);
     l = zeros(time_repetita,1);
-
+    cr = zeros(time_repetita,1);
+    rs = zeros(time_repetita,1);
+    
+    % define matrix A
     A = full(sprand(m,n,d));
+    % compute optimal error with Truncated SVD
     optimal_err = optimalK(A, k);
-                
+    
+    
     for i = 1:time_repetita
         tic 
-                    
-        [U,V, l(i)] = Solver(A, k, reg_parameter, stop_parameter, 1); 
-                    
-         tot_time_elapsed(i) = toc;
-         epoch_time_elapsed(i) = tot_time_elapsed(i)/l(i); 
-                    
-         err = norm(A-U*V', "fro");
-                    
-         precision(i) = err - optimal_err;
+        % solve the problem with our algorithm
+        [U,V, l(i), cr(i), rs(i)] = Solver(A, k, reg_parameter, stop_parameter, 1); 
+        
+        % compute time required          
+        tot_time_elapsed(i) = toc;
+        epoch_time_elapsed(i) = tot_time_elapsed(i)/l(i); 
+         
+        % compute precision
+        err = norm(A-U*V', "fro");               
+        precision(i) = err - optimal_err;
     end
-    dlmwrite('temp.csv',[j, m,n,k,d, mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision)],'delimiter',',','-append');
+    dlmwrite('temp.csv',[j, m,n,k,d, reg_parameter(1), reg_parameter(2), mean(cr), std(cr), mean(rs), std(rs), mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision)],'delimiter',',','-append');
 end
+close(h)
 
 % read data from temp.csv and delete its content
 data = csvread('temp.csv');
 fclose(fopen('temp.csv','w'));
 
 % define final 
-textHeader = '"id","m_size", "n_size", "k_rank", "density", "last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std"';
+textHeader = '"id","m_size", "n_size", "k_rank", "density", "lambda_u", "lambda_v", "mean_convergencerate","std_convergencerate", "mean_residualstep", "std_residualstep",last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std"';
 fid = fopen(type+'_experiments.csv','w'); 
 fprintf(fid,'%s\n',textHeader);
 fclose(fid);
 dlmwrite(type+'_experiments.csv',data, '-append');
-
-

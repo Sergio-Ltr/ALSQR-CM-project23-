@@ -8,17 +8,21 @@ type = values('type');
 combs = GetCombinations(values);
 
 % repeat each combination 5 times
-time_repetita = 5; 
+time_repetita = 1; 
 
 % total number of considered combinations
 [~, tot_combinations] = size(combs);
 
 % total number of executions 
-tot_executions = time_repetita * tot_combinations
+tot_executions = time_repetita * tot_combinations;
+%sprintf('Tototal combinations:'+tot_combinations);
+%sprintf('Tototal execution:'+tot_executions);
 
+wb = waitbar(0,'Start executing '+type+' esperiment');
 
 for j = 1:tot_combinations
-
+    msg = sprintf('In progress: executing combination %3.0f / %g', j, tot_combinations);
+    wb = waitbar(j/tot_combinations, wb, msg);
     % get values from a given combination
     m = combs{j}(1);
     n = combs{j}(2);
@@ -56,6 +60,7 @@ for j = 1:tot_combinations
     end
     dlmwrite('temp.csv',[j, m,n,k,d, reg_parameter(1), reg_parameter(2), mean(cr), std(cr), mean(rs), std(rs), mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision)],'delimiter',',','-append');
 end
+close(wb)
 
 % read data from temp.csv and delete its content
 data = csvread('temp.csv');

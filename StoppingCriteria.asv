@@ -26,7 +26,7 @@ end
 
 % if (SC 1) stop conditions or  (SC 2) stop conditions are verified
 % ---> interruption of the algorithm execution
-if  global_stop == true || local_stop == true
+if  global_stop == true || local_stop == 0
     stop = true;
 end
 

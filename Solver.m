@@ -24,10 +24,11 @@ else
   verbose = 0;
 end
 
-% ---- Tikonov regularization hyper-parameter (lambda_u, lamda_v) 
+% Tikonov regularization hyper-parameter (lambda_u, lamda_v) 
 lambda_u = reg_parameter(1);
 lambda_v = reg_parameter(2);
 
+% fix max number of epoch
 max_epoch = stop_condition(1);
 
 
@@ -63,11 +64,12 @@ for i = 1:max_epoch
     u_err_prev = u_err;
     v_err_prev = v_err;
     
+    % ---> Stopping criteria 
     if i>1
         rel_err = v_err/norm(A, "fro");
         convergence_rate = norm(U_prev*V_prev' - U*V', "fro") / norm(U_prev*V_prev', "fro");
     
-        [stop, local_stop] = StoppingCriteria(i, stop_condition, rel_err, convergence_rate, "local", local_stop);
+        [stop, local_stop] = StoppingCriteria(i, stop_condition, rel_err, convergence_rate, local_stop);
         if stop == true
             disp("Early stopping at epoch")
             disp(i)
