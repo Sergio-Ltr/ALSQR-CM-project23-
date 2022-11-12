@@ -42,12 +42,12 @@ if experiment == "sparsity"
 elseif experiment == "shape"
 
     value2test('type') = experiment;
-    value2test('m_range') = cat(2, [10, 50],[100:100:200]);
-    value2test('n_range')  =  cat(2, [10, 50],[100:100:200]);
+    value2test('m_range') = cat(2, [10, 50],[100:100:1500]);
+    value2test('n_range')  =  cat(2, [10, 50],[100:100:1500]);
     value2test('k_min') = 50;
     value2test('k_max') = 0;
-    value2test('k_stride') = 100;
-    value2test('k_limits') = [2];
+    value2test('k_stride') = 50;
+    value2test('k_limits') = [2,5,10,25];
     value2test('d_range')  = [1]; 
     value2test('reg_parameter')  = [1, 1];
     value2test('stop_parameter') = [100, 0, 0, 10]; % non inizializzare patience uguale a 0 perchè vuol dire che si interrompe subito l'esecuzione  (vuol dire patience esaurita)  
