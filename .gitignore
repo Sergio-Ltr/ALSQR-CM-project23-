@@ -5,3 +5,9 @@ temp.csv
 Solver_old.m
 
 *.asv
+
+plots
+
+results
+
+.temp

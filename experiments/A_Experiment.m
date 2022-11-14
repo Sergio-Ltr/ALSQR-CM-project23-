@@ -42,8 +42,8 @@ if experiment == "sparsity"
 elseif experiment == "shape"
 
     value2test('type') = experiment;
-    value2test('m_range') = cat(2, [10, 50],[100:100:1500]);
-    value2test('n_range')  =  cat(2, [10, 50],[100:100:1500]);
+    value2test('m_range') = cat(2, [10, 50], [100:100:500]);
+    value2test('n_range')  =  cat(2, [10, 50], [100:100:500]);
     value2test('k_min') = 50;
     value2test('k_max') = 0;
     value2test('k_stride') = 50;

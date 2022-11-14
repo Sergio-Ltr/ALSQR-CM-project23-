@@ -3,22 +3,9 @@ function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_con
 m = size(A,1);
 n = size(A,2);
 
-%Initialization of the V_0 matrix. 
-if nargin > 4
-    if intial_V_constraint == 4
-            V = randn(n,k); % = Vo (starting point) 
-    elseif  intial_V_constraint == 3
-            V = randn(n,k); % = Vo (starting point) 
-    elseif  intial_V_constraint == 2
-            V = randn(n,k); % = Vo (starting point) 
-    elseif  intial_V_constraint == 1
-            V = randn(n,k); % = Vo (starting point) 
-    end
-else % intial_V_constraint = 0;
-    V = randn(n,k); % = Vo (starting point)  
-end
+V = Initialize_V(n, k); % intial_V_constraint);
 
-if nargin > 5 && verbosity
+if nargin > 6 && verbosity
   verbose = 1;
 else
   verbose = 0;

@@ -1,9 +1,1 @@
-
-**October 2022**
-- houseolder vector
-- thin qr factorization 
-- classic QR factorization (old version) 
-- Approximate U 
-- Approximate V
-- Solver with error plots
-- optimal k function for compare our error with svd error
+Resulsts at: https://drive.google.com/drive/folders/10mFGBTKXmi-9MzdD4eTtgZ4XGMwh0z_N?usp=share_link
