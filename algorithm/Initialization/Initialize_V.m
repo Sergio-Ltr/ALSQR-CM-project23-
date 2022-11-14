@@ -30,8 +30,8 @@
 % V = initialize_V(30, 12, "sparse", 0.6);
 %
 % Matrix with shape 30 x 12 sampled from a Gaussian distribution with mean
-% 0 and stdev=1. 
-% V = initialize_V(30,12, "dist", {type: "normal", mu:"0", sigma:"1"} )
+% mu = 0 and stdev sigma=1. 
+% V = initialize_V(30, 12, "dist", {type:"normal", params: [0, 1]}))
 % --------------------------------------------------------------------------------------
 
 function [V] = Initialize_V (n, k, constraint_key, param)
@@ -42,8 +42,10 @@ mat = randn(n,k);
 
 if nargin > 2
     if constraint_key == "dist" %second item is distribution type (i.e. "normal"). Possibilities here: 
-        throw(MException("Not implemented error", "Sorry, this function is not implemented yet"))    
-        %dist = randraw(); % = Vo (starting point) 
+        dist_key = char(param(1));
+        dist_type = cell2mat(param(2:end));
+        values = randraw(dist_key, dist_type, n*k);
+        mat = reshape(values, [n,k]);
     elseif  constraint_key == "sparse" %second item is density coefficient 0 < d < 1.  
         d = 0.5;
         if param > 0 && param < 1
