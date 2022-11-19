@@ -35,34 +35,61 @@ if experiment == "sparsity"
     value2test('reg_parameter')  = [1, 1];
     value2test('stop_parameter') = [100, 10e-3, 10e-5, 10];
     
-    %[comb] = GetCombinations(value2test);
     ExecuteExperiment(value2test);
     %PlotExperiment(experiment+'.csv') 
     
 elseif experiment == "shape"
 
     value2test('type') = experiment;
-    value2test('m_range') = cat(2, [10, 50],[100:100:1500]);
-    value2test('n_range')  =  cat(2, [10, 50],[100:100:1500]);
+    value2test('m_range') = cat(2, [10, 50],[100:100:200]);
+    value2test('n_range')  =  cat(2, [10, 50],[100:100:200]);
     value2test('k_min') = 50;
     value2test('k_max') = 0;
-    value2test('k_stride') = 50;
-    value2test('k_limits') = [2,5,10,25];
+    value2test('k_stride') = 100;
+    value2test('k_limits') = [2];
     value2test('d_range')  = [1]; 
     value2test('reg_parameter')  = [1, 1];
     value2test('stop_parameter') = [100, 0, 0, 10]; % non inizializzare patience uguale a 0 perchè vuol dire che si interrompe subito l'esecuzione  (vuol dire patience esaurita)  
 
     ExecuteExperiment(value2test);
 
-elseif experiment == "distribution"
-
 elseif experiment == "simmetry"
-elseif experiment == "tall_thin"
-elseif experiment == "short_fat"
-elseif experiment == "almost_square"
-elseif experiment == "square"
-elseif experiment == "decreasing_rank"
+    
+    value2test('type') = experiment;
+    value2test('m_range') = cat(2, [50],[100:100:200]);
+    value2test('n_range')  =  cat(2, [50],[100:100:200]);
+    value2test('k_min') = 50;
+    value2test('k_max') = 0;
+    value2test('k_stride') = 100;
+    value2test('k_limits') = [2];
+    value2test('d_range')  = [1]; 
+    value2test('reg_parameter')  = [1, 1];
+    value2test('stop_parameter') = [100, 0, 0, 10];
+
+    ExecuteExperiment(value2test);
+
+elseif experiment == "distribution"
+    
+    value2test('type') = experiment;
+    value2test('m_range') = cat(2, [10, 50],[100:100:200]);
+    value2test('n_range')  =  cat(2, [10, 50],[100:100:200]);
+    value2test('k_min') = 50;
+    value2test('k_max') = 0;
+    value2test('k_stride') = 100;
+    value2test('k_limits') = [2];
+    value2test('d_range')  = [1]; 
+    value2test('reg_parameter')  = [1, 1];
+    value2test('stop_parameter') = [100, 0, 0, 10];
+    
 else
     fprintf("Experiment type is not well-defined")
 end 
+
+% elseif experiment == "tall_thin"
+% elseif experiment == "short_fat"
+% elseif experiment == "almost_square"
+% elseif experiment == "square"
+% elseif experiment == "decreasing_rank" 
+
+
 

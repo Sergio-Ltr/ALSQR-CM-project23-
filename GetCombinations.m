@@ -7,9 +7,12 @@ k_min   = values('k_min');
 k_max   = values('k_max');
 k_stride = values ('k_stride');
 k_limits = values ('k_limits');
-d_range  = values('d_range'); 
 stop = values('stop_parameter');
 reg  = values ('reg_parameter');
+
+if isKey(values, "d_range") == true
+    d_range  = values('d_range'); 
+end
 
 % inizialize a list of all possible combinations
 combinations = {};
@@ -27,8 +30,9 @@ for m = m_range
     end
 end
 
+
 % total number of considered combinations
-[~, tot_combinations] = size(combinations)
+[~, tot_combinations] = size(combinations);
 
 % total number of executions 
-tot_executions = 5 * tot_combinations
+tot_executions = 5 * tot_combinations;
