@@ -1,9 +1,13 @@
-function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_condition, intial_V_constraint, verbosity)
+function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_condition, intial_V, verbosity)
 
-m = size(A,1);
+%m = size(A,1);
 n = size(A,2);
 
-V = Initialize_V(n, k); % intial_V_constraint);
+if nargin > 5 
+    V = initial_V;
+else 
+    V = Initialize_V(n, k); 
+end
 
 if nargin > 6 && verbosity
   verbose = 1;

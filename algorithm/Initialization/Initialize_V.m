@@ -8,7 +8,7 @@
 % Generate a random values matrix of shape n x k. 
 % Desired properties can be specified as constraints. 
 % If no constrainnts are specified, V is just a random matrix.
-%% Possible Constaint Keys
+%% Possible Constraint Keys
 % - "dist": 
 %   sample values of V from a distributuio specifying its parameters according to
 %   RANDRAW" module: https://it.mathworks.com/matlabcentral/fileexchange/7309-randraw
@@ -51,7 +51,7 @@ if nargin > 2
         if param > 0 && param < 1
             d = param;
         end
-        mat = sprandn(n, k, d); % = Vo (starting point) 
+        mat = full(sprandn(n, k, d)); % = Vo (starting point) 
     elseif  constraint_key == "orth"
         mat = orth(mat); % output a matrix of orthogonal rows 
     elseif  constraint_key == "low_rank"

@@ -39,13 +39,15 @@ for j = 1:tot_combinations
     cr = zeros(time_repetita,1);
     rs = zeros(time_repetita,1);
     
-    % define matrix A
-    A = full(sprand(m,n,d));
-    % compute optimal error with Truncated SVD
-    optimal_err = optimalK(A, k);
+
     
     
     for i = 1:time_repetita
+        % define matrix A
+        A = Initialize_A(m,n,'sparse',d);
+        % compute optimal error with Truncated SVD
+        optimal_err = optimalK(A, k);
+
         tic 
         % solve the problem with our algorithm
         [U,V, l(i), cr(i), rs(i)] = Solver(A, k, reg_parameter, stop_parameter, 1); 

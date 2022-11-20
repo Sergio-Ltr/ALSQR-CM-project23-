@@ -46,7 +46,7 @@ if nargin > 2
         if param > 0 && param < 1
             d = param;
         end
-        mat = sprandn(m, n, d);
+        mat = full(sprandn(m, n, d));
     %elseif  constraint_key == "symm"
         %mat = orth(mat); % output a matrix of orthogonal rows 
     end  
