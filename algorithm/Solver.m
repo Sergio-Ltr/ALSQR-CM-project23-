@@ -89,7 +89,3 @@ last_rs_v = residual_step_2(l);
 %norm(A*A' - U*U', "fro")
 
 %norm(A'*A - V*V', "fro")
-%{
-NB. dopo poche iterazioni i<10) l'errore smette di diminuire
-controllare tutto per individuare possibili errori
-%}

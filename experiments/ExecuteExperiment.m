@@ -39,7 +39,24 @@ for j = 1:tot_combinations
     cr = zeros(time_repetita,1);
     rs = zeros(time_repetita,1);
     
+    % Define matrix A
+    % TO DO: call correct A initilization wrt experiments type
+    if type == "sparsity"
+        A = full(sprand(m,n,d));
+        
+    elseif type == "simmetry"
+        A = randn(m,n);
+        A = A*A';
+    
+    elseif type == "distribution"
+        A = randn(m,n);
+        A = random('normal',0,1,size(A));   
+    else
+         A = randn(m,n);
+    end
 
+    % compute optimal error with Truncated SVD
+    optimal_err = optimalK(A, k);
     
     
     for i = 1:time_repetita
@@ -51,6 +68,8 @@ for j = 1:tot_combinations
         tic 
         % solve the problem with our algorithm
         [U,V, l(i), cr(i), rs(i)] = Solver(A, k, reg_parameter, stop_parameter, 1); 
+        %tempcr = cr(i)
+        %rs(i)
         
         % compute time required          
         tot_time_elapsed(i) = toc;
@@ -60,6 +79,7 @@ for j = 1:tot_combinations
         err = norm(A-U*V', "fro");               
         precision(i) = err - optimal_err;
     end
+    %meanrs = mean(rs)
     dlmwrite('temp.csv',[j, m,n,k,d, reg_parameter(1), reg_parameter(2), mean(cr), std(cr), mean(rs), std(rs), mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision)],'delimiter',',','-append');
 end
 close(wb)
@@ -68,9 +88,16 @@ close(wb)
 data = csvread('temp.csv');
 fclose(fopen('temp.csv','w'));
 
-% define final 
-textHeader = '"id","m_size", "n_size", "k_rank", "density", "lambda_u", "lambda_v", "mean_convergencerate","std_convergencerate", "mean_residualstep", "std_residualstep",last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std"';
-fid = fopen(type+'_experiments.csv','w'); 
-fprintf(fid,'%s\n',textHeader);
+% storing matrix properties
+textHeaderProperties = '"id","m_size", "n_size", "k_rank", "density", "lambda_u", "lambda_v"';
+fid = fopen(type+'_experiments_Properties.csv','w'); 
+fprintf(fid,'%s\n',textHeaderProperties);
 fclose(fid);
-dlmwrite(type+'_experiments.csv',data, '-append');
+dlmwrite(type+'_experiments_Properties.csv', data(:,1:7), '-append');
+
+% storing results
+textHeaderResults = '"id", "mean_cr","std_cr", "mean_rs", "std_rs",last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std"';
+fid = fopen(type+'_experiments_Results.csv','w'); 
+fprintf(fid,'%s\n',textHeaderResults);
+fclose(fid);
+dlmwrite(type+'_experiments_Results.csv', data(:,[1 8:end]), '-append');
