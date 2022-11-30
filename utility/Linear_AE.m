@@ -12,11 +12,11 @@ function [AE] =  Linear_AE(data, k, hyperparameters)
     view(net);
 
 
-    %AE.LW(2) Encoder weights !! But we also have biases | n x k 
-    %AE.b(1) Encoder biases | k x 1
+    AE.LW(2) %Encoder weights !! But we also have biases | n x k 
+    AE.b(1) %Encoder biases | k x 1
 
-    %AE.IW(2) Decoder weights !! But we also have biases | k x n
-    %AE.b(2) Decoder biases. | n x 1
+    AE.IW(2) %Decoder weights !! But we also have biases | k x n
+    AE.b(2) % Decoder biases. | n x 1
     
     AE = net;
 

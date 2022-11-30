@@ -30,25 +30,27 @@ if experiment == "sparsity"
     value2test('k_min') = 4;
     value2test('k_max') = 4;
     value2test('k_stride') = 8;
-    value2test('k_limits') = [2];
+    value2test('k_limits') = [2,9];
     value2test('d_range')  = 0.5:0.5:1; 
     value2test('reg_parameter')  = [1, 1];
-    value2test('stop_parameter') = [100, 10e-3, 10e-5, 10];
+    value2test('stop_parameter') = [500, 10e-3, 10e-5, 10];
     
     ExecuteExperiment(value2test);
     %PlotExperiment(experiment+'.csv') 
     
 elseif experiment == "shape"
 
+    % 
+
     value2test('type') = experiment;
-    value2test('m_range') = cat(2, [10, 50], [100:100:500]);
-    value2test('n_range')  =  cat(2, [10, 50], [100:100:500]);
-    value2test('k_min') = 50;
-    value2test('k_max') = 0;
+    value2test('m_range') = 10;
+    value2test('n_range')  =  200;
+    value2test('k_min') = 9; 
+    value2test('k_max') = 9;
     value2test('k_stride') = 100;
-    value2test('k_limits') = [2];
-    value2test('d_range')  = [1]; 
-    value2test('reg_parameter')  = [1, 1];
+    value2test('k_limits') = [9];
+    value2test('d_range')  = [0.7]; 
+    value2test('reg_parameter')  = [0, 0];
     value2test('stop_parameter') = [100, 0, 0, 10]; % non inizializzare patience uguale a 0 perchè vuol dire che si interrompe subito l'esecuzione  (vuol dire patience esaurita)  
 
     ExecuteExperiment(value2test);
@@ -62,7 +64,7 @@ elseif experiment == "simmetry"
     value2test('k_max') = 0;
     value2test('k_stride') = 100;
     value2test('k_limits') = [2];
-    value2test('d_range')  = [1]; 
+    value2test('d_range')  = [1];
     value2test('reg_parameter')  = [1, 1];
     value2test('stop_parameter') = [100, 0, 0, 10];
 

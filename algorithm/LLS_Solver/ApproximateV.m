@@ -1,23 +1,28 @@
-function [V, err] = ApproximateV (A, U, lambda)
+function [V, err, zero_row_warning] = ApproximateV (A, U, lambda)
 
+opt.UT = true;
 [m, k] = size (U);  % U size = m x k
 [~, n]  = size (A); 
 
-if lambda ~= 0 
+if lambda ~= 0
     U = [U; lambda * eye(k)];
     A = [A; zeros(k,n)]; 
 end
 
 Vt = zeros(k,n);
 
-[Q, R] = ThinQRfactorization(U);
+[Q, R, zero_row_warning] = ThinQRfactorization(U);
+if zero_row_warning == true
+    U
+end
 
 %[Q,R] = qr(U);
-%[Q,R] = QRfactorization(U)
+%[Q,R] = QRfactorization(U);
 
 for i = 1:n
     a = A(:, i);
-    x = R\(Q'*a);
+    %x = R\(Q'*a);
+    [x, r] = linsolve(R, Q'*a, opt);
     Vt(:,i) = x;
 end
 V = Vt';

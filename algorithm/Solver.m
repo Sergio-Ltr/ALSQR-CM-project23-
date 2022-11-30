@@ -1,4 +1,4 @@
-function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_condition, intial_V, verbosity)
+function [U, V, l, last_cr_v, last_rs_v, zerosrows] = Solver (A, k, reg_parameter, stop_condition, intial_V, verbosity)
 
 %m = size(A,1);
 n = size(A,2);
@@ -12,7 +12,7 @@ end
 if nargin > 6 && verbosity
   verbose = 1;
 else
-  verbose = 0;
+  verbose = 1;
 end
 
 % Tikonov regularization hyper-parameter (lambda_u, lamda_v) 
@@ -40,8 +40,13 @@ local_stop = 0;
 l = max_epoch;
 for i = 1:max_epoch
     
-    [U,u_err] = ApproximateU(A, V, lambda_u);
-    [V,v_err] = ApproximateV(A, U, lambda_v);
+    [U,u_err, zero_row_warning_u] = ApproximateU(A, V, lambda_u);
+    [V,v_err, zero_row_warning_v] = ApproximateV(A, U, lambda_v);
+    if zero_row_warning_u == true || zero_row_warning_v == true
+       throw(MException("000","Zeros row encounnterend in an R matrix"))
+    end
+
+        
     
     residual_step_1(i) = u_err/norm(A, "fro");
     residual_step_2(i) = v_err/norm(A, "fro");
@@ -75,12 +80,14 @@ for i = 1:max_epoch
    
 end
 
+
 if verbose
     Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ])
 end
 
 last_cr_v = convergence_v_story(l);
 last_rs_v = residual_step_2(l);
+
 
 
 %optimalError = optimalK(A, k)

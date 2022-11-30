@@ -5,8 +5,8 @@ value2test = containers.Map;
 if experiment == "QRfactorization_time"
     
     value2test('type') = experiment;
-    value2test('m_range') = cat(2, [300],[100:100:200]);
-    value2test('n_range')  =  cat(2, [50],[10:20:80]);
+    value2test('m_range') = 525:25:1000;
+    value2test('n_range')  = 25:25:500;
    
     ExecuteTimeExperiment(value2test);
 

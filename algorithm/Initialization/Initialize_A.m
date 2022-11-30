@@ -43,7 +43,7 @@ if nargin > 2
         mat = reshape(values, [m,n]);
     elseif  constraint_key == "sparse" %second item is density coefficient 0 < d < 1.  
         d = 0.5;
-        if param > 0 && param < 1
+        if param > 0 && param <= 1
             d = param;
         end
         mat = full(sprandn(m, n, d));

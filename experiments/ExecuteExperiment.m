@@ -8,7 +8,7 @@ type = values('type');
 combs = GetCombinations(values);
 
 % repeat each combination 5 times
-time_repetita = 1; 
+time_repetita = 30; 
 
 % total number of considered combinations
 [~, tot_combinations] = size(combs);
@@ -35,6 +35,7 @@ for j = 1:tot_combinations
     tot_time_elapsed = zeros(time_repetita,1);
     epoch_time_elapsed = zeros(time_repetita,1);
     precision = zeros(time_repetita,1);
+    rel_precision = zeros(time_repetita,1);
     l = zeros(time_repetita,1);
     cr = zeros(time_repetita,1);
     rs = zeros(time_repetita,1);
@@ -78,9 +79,10 @@ for j = 1:tot_combinations
         % compute precision
         err = norm(A-U*V', "fro");               
         precision(i) = err - optimal_err;
+        rel_precision(i) = precision(i)/optimal_err;
     end
     %meanrs = mean(rs)
-    dlmwrite('temp.csv',[j, m,n,k,d, reg_parameter(1), reg_parameter(2), mean(cr), std(cr), mean(rs), std(rs), mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision)],'delimiter',',','-append');
+    dlmwrite('temp.csv',[j, m,n,k,d, reg_parameter(1), reg_parameter(2), mean(cr), std(cr), mean(rs), std(rs), mean(l),std(l), mean(tot_time_elapsed), std(tot_time_elapsed), mean(epoch_time_elapsed), std(epoch_time_elapsed), mean(precision), std(precision), mean(rel_precision), std(rel_precision)],'delimiter',',','-append');
 end
 close(wb)
 
@@ -96,7 +98,7 @@ fclose(fid);
 dlmwrite(type+'_experiments_Properties.csv', data(:,1:7), '-append');
 
 % storing results
-textHeaderResults = '"id", "mean_cr","std_cr", "mean_rs", "std_rs",last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std"';
+textHeaderResults = '"id", "mean_cr","std_cr", "mean_rs", "std_rs",last_epoch_mean", "last_epoch_std", "tot_time_mean","tot_time_std", "epoch_time_mean","epoch_time_std", "precision_mean",  "precision_std", "rel_precision_mean",  "rel_precision_std"';
 fid = fopen(type+'_experiments_Results.csv','w'); 
 fprintf(fid,'%s\n',textHeaderResults);
 fclose(fid);

@@ -5,7 +5,7 @@ type = values('type');
 combs = GetTimeCombinations(values);
 
 % compute total number of executions and combinations
-time_repetita = 3; 
+time_repetita = 5; 
 [~, tot_combinations] = size(combs);
 tot_executions = time_repetita * tot_combinations;
 
@@ -40,7 +40,7 @@ for j = 1:tot_combinations
             QR_time_elapsed(i) = toc;
             
             tic % measure time elapsed for MatLab QR factorization
-            [~, ~] = qr(A);
+            [~] = qr(A, 0);
             mQR_time_elapsed(i) = toc;
     
         end
