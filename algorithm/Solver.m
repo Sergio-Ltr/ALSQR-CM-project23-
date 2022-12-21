@@ -1,4 +1,19 @@
-function [U, V, l, last_cr_v, last_rs_v, zerosrows] = Solver (A, k, reg_parameter, stop_condition, intial_V, verbosity)
+%% Stopping Criteria 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
+function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_condition, intial_V, verbosity)
 
 %m = size(A,1);
 n = size(A,2);
@@ -40,13 +55,14 @@ local_stop = 0;
 l = max_epoch;
 for i = 1:max_epoch
     
-    [U,u_err, zero_row_warning_u] = ApproximateU(A, V, lambda_u);
-    [V,v_err, zero_row_warning_v] = ApproximateV(A, U, lambda_v);
+    [U,u_err] = ApproximateU(A, V, lambda_u);
+    [V,v_err] = ApproximateV(A, U, lambda_v);
+    
+    %{
     if zero_row_warning_u == true || zero_row_warning_v == true
        throw(MException("000","Zeros row encounnterend in an R matrix"))
     end
-
-        
+    %}  
     
     residual_step_1(i) = u_err/norm(A, "fro");
     residual_step_2(i) = v_err/norm(A, "fro");
@@ -67,8 +83,8 @@ for i = 1:max_epoch
     
         [stop, local_stop] = StoppingCriteria(i, stop_condition, rel_err, convergence_rate, local_stop);
         if stop == true
-            disp("Early stopping at epoch")
-            disp(i)
+            %disp("Early stopping at epoch")
+            %disp(i)
             l = i; 
             break
         end

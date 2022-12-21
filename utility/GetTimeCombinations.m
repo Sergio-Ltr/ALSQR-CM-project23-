@@ -6,7 +6,9 @@ if length(values)==3
     combinations = {};
     for m = m_range
         for n = n_range
-            combinations{end +1} = [m, n];
+            if m > n
+                combinations{end +1} = [m, n];
+            end
         end
     end
 

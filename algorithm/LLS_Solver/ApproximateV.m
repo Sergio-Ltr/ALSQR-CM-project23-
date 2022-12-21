@@ -1,4 +1,22 @@
-function [V, err, zero_row_warning] = ApproximateV (A, U, lambda)
+%% Stopping Criteria 
+% Solve the subproblem (2), calculating the solutions of the m LLS
+% involving U and the columns of A, obtaining the m rows of U.   
+%% Syntax
+%
+%
+%% Description
+% 
+% 
+%% Parameters 
+% A: the target matrix, shaped m x n. 
+% U: the fixed "parameter" matrix for the step, shaped m x k. 
+% lambda: regularization hypermparameter. 
+%   If setted, it multiplies the I matrix added as the k last columns of U. 
+%% Examples
+%
+%
+%% ------------------------------------------------------------------------
+function [V, err] = ApproximateV (A, U, lambda)
 
 opt.UT = true;
 [m, k] = size (U);  % U size = m x k
@@ -11,10 +29,7 @@ end
 
 Vt = zeros(k,n);
 
-[Q, R, zero_row_warning] = ThinQRfactorization(U);
-if zero_row_warning == true
-    U
-end
+[Q, R] = ThinQRfactorization(U);
 
 %[Q,R] = qr(U);
 %[Q,R] = QRfactorization(U);

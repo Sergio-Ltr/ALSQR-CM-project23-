@@ -1,3 +1,18 @@
+%% Stopping Criteria 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
 function[] = Plotter(residual_history, convergence_history, norms_history)
  % Top two plots
 tiledlayout(nargin,2);

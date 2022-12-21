@@ -1,4 +1,18 @@
-
+%% Stopping Criteria 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
 function [] = ShapeExperiment()
 
 stop_parameter = [100, 10e-3, 10e-5, 10];

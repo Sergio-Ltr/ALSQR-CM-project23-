@@ -1,10 +1,10 @@
-function [Q1,R1, zero_row_warning] = ThinQRfactorization (A)
+function [Q1,R1] = ThinQRfactorization (A)
 
 [m, n] = size(A);   % dimension of matrix A
 Q1 = eye(m,n);      % initialize Q1 as identity matrix mxm
 A=[A;zeros(1,n)];
 
-zero_row_warning = false;
+%zero_row_warning = false;;
 
 
 for i = 1:n% if m >> n then min(m-1,n) = n
@@ -13,16 +13,19 @@ for i = 1:n% if m >> n then min(m-1,n) = n
     % store u and s i the lower part of the A matrix
 
     [A(i+1:m+1, i), A(i,i)] = HouseholderVector(A(i:m,i));
+    %A(i:m, i+1:n) = (eye(m-i+1) - 2 * A(i+1:m+1,i) * A(i+1:m+1,i)') * A(i:m, i+1:n);
+    
     A(i:m, i+1:n) = A(i:m, i+1:n) - 2 * A(i+1:m+1,i) * A(i+1:m+1,i)' * A(i:m, i+1:n);
 end
 
 % compute Q1 
 for i = n:-1:1
-    Q1(i:m, :) = Q1(i:m, :) - 2 * A(i+1:m+1,i) * A(i+1:m+1,i)' * Q1(i:m, :); 
+    Q1(i:m, :) = Q1(i:m, :) - 2 * A(i+1:m+1,i) * A(i+1:m+1,i)'* Q1(i:m, :); 
 end
 
 R1 = triu(A(1:n,:));
 
+%{
 for i = 1:n
     if nnz(R1(i, i:end)) == 0 
         rank(A)
@@ -30,8 +33,6 @@ for i = 1:n
     end
 end
 
-
-%{
 R1 = triu(A(1:n,:));
 density_threshold = 0.72;
 density = nnz(R1) / (n*n);

@@ -1,3 +1,18 @@
+%% Stopping Criteria 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
 function [combinations] = GetCombinations(values)
 
 % read possible values for each variable

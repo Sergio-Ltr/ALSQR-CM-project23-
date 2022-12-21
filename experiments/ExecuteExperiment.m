@@ -1,4 +1,18 @@
-
+%% Execute Experiment 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
 function [] = ExecuteExperiment(values)
 
 % declaring experimental type (es. "sparsity_experiment")

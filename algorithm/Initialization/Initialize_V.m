@@ -32,7 +32,7 @@
 % Matrix with shape 30 x 12 sampled from a Gaussian distribution with mean
 % mu = 0 and stdev sigma=1. 
 % V = initialize_V(30, 12, "dist", {type:"normal", params: [0, 1]}))
-% --------------------------------------------------------------------------------------
+%% --------------------------------------------------------------------------------------
 
 function [V] = Initialize_V (n, k, constraint_key, param)
     

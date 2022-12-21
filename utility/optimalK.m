@@ -1,3 +1,18 @@
+%% Stopping Criteria 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
 function [errore] = optimalK (A, k)
 [U, S, V] = svd(A);
 U = U(:, 1:k);

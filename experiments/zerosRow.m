@@ -1,3 +1,18 @@
+%% Stopping Criteria 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
 function [] = zerosRow()
 ripetition = 200;
 for i = 1:ripetition

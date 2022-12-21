@@ -1,3 +1,18 @@
+%% Stopping Criteria 
+%
+%% Syntax
+%
+%
+%% Description
+%
+%
+%% Parameters 
+%
+%
+%% Examples
+%
+%
+%% ---------------------------------------------------------------------------------------------------
 function [AE] =  Linear_AE(data, k, hyperparameters)
     net = patternnet;
 

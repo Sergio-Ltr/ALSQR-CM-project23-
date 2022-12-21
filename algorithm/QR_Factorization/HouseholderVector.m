@@ -13,6 +13,8 @@ v(1) = v(1) - s;
 
 u = v / norm(v);
 nan_error = false;
+
+%{
 if isnan(u)
     
     x
@@ -20,3 +22,4 @@ if isnan(u)
     nan_error = true;
     a="houseolder nan"
 end
+%}
