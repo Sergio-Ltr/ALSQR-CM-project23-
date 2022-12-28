@@ -15,12 +15,12 @@ for i = 1:n% if m >> n then min(m-1,n) = n
     [A(i+1:m+1, i), A(i,i)] = HouseholderVector(A(i:m,i));
     %A(i:m, i+1:n) = (eye(m-i+1) - 2 * A(i+1:m+1,i) * A(i+1:m+1,i)') * A(i:m, i+1:n);
     
-    A(i:m, i+1:n) = A(i:m, i+1:n) - 2 * A(i+1:m+1,i) * A(i+1:m+1,i)' * A(i:m, i+1:n);
+    A(i:m, i+1:n) = A(i:m, i+1:n) - 2 * A(i+1:m+1,i) * (A(i+1:m+1,i)' * A(i:m, i+1:n));
 end
 
 % compute Q1 
 for i = n:-1:1
-    Q1(i:m, :) = Q1(i:m, :) - 2 * A(i+1:m+1,i) * A(i+1:m+1,i)'* Q1(i:m, :); 
+    Q1(i:m, :) = Q1(i:m, :) - 2 * A(i+1:m+1,i) * (A(i+1:m+1,i)'* Q1(i:m, :)); 
 end
 
 R1 = triu(A(1:n,:));
