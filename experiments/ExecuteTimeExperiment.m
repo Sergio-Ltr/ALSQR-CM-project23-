@@ -59,12 +59,32 @@ for j = 1:tot_combinations
         svd_time_elapsed  = zeros(time_repetita,1);
         
         for i = 1:time_repetita
-            % add script for solver time experiments 
+            
+            % define matrix A
+            A = Initialize_A(m,n,'sparse',d);
+    
+            tic 
+            % solve the problem with our algorithm
+            [U,V] = OptSolver(A, k, stop_parameter, 1); 
+            %appA = U*V';        
+            solver_time_elapsed(i) = toc;
+
+            tic
+            % solve with SVD
+            [U, S, V] = svd(A);
+            U = U(:, 1:k);
+            S = S(1:k,1:k);
+            V = V(:, 1:k);
+            %appA  = U*S*V';
+            % compute time required          
+            svd_time_elapsed(i) = toc; 
+
         end
+        
+        dlmwrite('temp.csv',[j, m,n,k,d, reg_parameter(1), reg_parameter(2), mean(solver_time_elapsed), std(solver_time_elapsed), mean(svd_time_elapsed), std(svd_time_elapsed)],'delimiter',',','-append');
         textHeaderProperties = '"id","m_size", "n_size", "k_rank", "density", "lambda_u", "lambda_v"';
         textHeaderResults = '"id", "mean_solver_time_elapsed","std_solver_time_elapsed", "mean_svd_time_elapsed", "std_svd_time_elapsed"';
 
-        
     end
 
 end
@@ -78,11 +98,11 @@ fclose(fopen('temp.csv','w'));
 fid = fopen(type+'_experiments_Properties.csv','w'); 
 fprintf(fid,'%s\n',textHeaderProperties);
 fclose(fid);
-dlmwrite(type+'_experiments_Properties.csv', data(:,1:3), '-append');
+dlmwrite(type+'_experiments_Properties.csv', data(:,1:7), '-append');
 
 % storing results
 fid = fopen(type+'_experiments_Results.csv','w'); 
 fprintf(fid,'%s\n',textHeaderResults);
 fclose(fid);
-dlmwrite(type+'_experiments_Results.csv', data(:,[1 4:end]), '-append');
+dlmwrite(type+'_experiments_Results.csv', data(:,[1 8:end]), '-append');
 

@@ -13,18 +13,18 @@ if experiment == "QRfactorization_time"
 elseif experiment == "solver_time"
 
     value2test('type') = experiment;
-    value2test('m_range') = cat(2, [50],[100:100:200]);
-    value2test('n_range')  =  cat(2, [50],[100:100:200]);
-    value2test('k_min') = 50;
-    value2test('k_max') = 0;
-    value2test('k_stride') = 100;
-    value2test('k_limits') = [2];
+    value2test('m_range') = [20];
+    value2test('n_range')  =  [15];
+    value2test('k_min') = 10;
+    value2test('k_max') = 10;
+    value2test('k_stride') = 1;
+    value2test('k_limits') = [];
     value2test('d_range')  = [1]; 
-    value2test('reg_parameter')  = [1, 1];
-    value2test('stop_parameter') = [100, 0, 0, 10];
+    value2test('reg_parameter')  = [0, 0];
+    value2test('stop_parameter') = [200, 0, 1e-6, 50];
 
-    
     ExecuteTimeExperiment(value2test);
+
 else
     fprintf("Experiment type is not well-defined")
 end
