@@ -13,18 +13,18 @@
 %
 %
 %% ---------------------------------------------------------------------------------------------------
-function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_condition, intial_V, verbosity)
+function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_condition, initial_V, verbosity)
 
 %m = size(A,1);
 n = size(A,2);
 
-if nargin > 5 
+if nargin > 4 
     V = initial_V;
 else 
     V = Initialize_V(n, k); 
 end
 
-if nargin > 6 && verbosity
+if nargin > 5 && verbosity
   verbose = 1;
 else
   verbose = 1;

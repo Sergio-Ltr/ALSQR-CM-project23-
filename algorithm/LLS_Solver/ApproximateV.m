@@ -1,8 +1,12 @@
-%% Stopping Criteria 
-% Solve the subproblem (2), calculating the solutions of the m LLS
-% involving U and the columns of A, obtaining the m rows of U.   
-%% Syntax
+%% ApproximateV
 %
+% Solve the subproblem (1), calculating the solutions of the n LLS
+% involving V and the columns of A, obtaining the m rows of V.   
+%
+%% Syntax 
+%
+% All the parameters are mandatory.
+% Approximate V(A, U, lambda) 
 %
 %% Description
 % 
@@ -13,8 +17,8 @@
 % lambda: regularization hypermparameter. 
 %   If setted, it multiplies the I matrix added as the k last columns of U. 
 %% Examples
-%
-%
+% Approximate V(A, U_current, 0) 
+% Approximate V(A, U_current, 0.2) 
 %% ------------------------------------------------------------------------
 function [V, err] = ApproximateV (A, U, lambda)
 

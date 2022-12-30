@@ -1,9 +1,9 @@
 %% Initialize_V
 % Create a A matrix to experiment algorithm behaviour on different configurations. 
 %% Syntax 
-% V = initialize_A(n, k);
-% V = initialize_A(n, k, constraint);
-% V = initialize_A(n, k, constraint, params);
+% V = initialize_A(m, n);
+% V = initialize_A(m, n, constraint);
+% V = initialize_A(m, n, constraint, params);
 %% Description 
 % Generate a random values matrix of shape n x k. 
 % Desired properties can be specified as constraints. 

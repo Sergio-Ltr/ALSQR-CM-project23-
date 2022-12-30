@@ -1,4 +1,4 @@
-%% Stopping Criteria 
+%% Linear_AE
 %
 %% Syntax
 %
