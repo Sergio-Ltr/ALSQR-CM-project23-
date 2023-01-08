@@ -24,9 +24,12 @@
 %% Parameters 
 %
 % A: the target matrix, shaped m x n. 
+%
 % U: the fixed "parameter" matrix for the step, shaped m x k. 
+%
 % lambda: regularization hypermparameter. 
-%   If setted, it multiplies the I matrix added as the k last columns of U. 
+%    If setted, it multiplies the I matrix added as the k last columns of U. 
+%
 % bias: determines if V should be computed unbiased  or biased: 
 %   - value = 0, size(V) = [n,k] ) - Unibased V
 %   - value = 1, size(V) = [n+1,k] ) - Encoder biased V
@@ -39,12 +42,31 @@
 % Approximate V(A, U_current, 0.2, 2)
 %
 %% ------------------------------------------------------------------------
+
 function [V, err] = ApproximateV (A, U, lambda, bias)
 
 opt.UT = true;
 [m, k] = size (U);  % U size = m x k
 [~, n]  = size (A); 
 
+%% Prepare to compute V_enc
+if nargin > 3 && bias == 1
+    A = [ones(m,1), A];
+    n = n + 1;
+    % In such case V_enc is given by 
+    % [Q,R] = qr(V_biased)
+    % V_enc = Q * inv(R')
+end
+
+%% Prepare to compute V_dec
+if nargin > 3 && bias == 2
+    U = [ones(m,1), U];
+    size(U)
+    k = k + 1;
+    % In this case V_dec = V_biased
+end
+
+%% Applying Ridge Regression
 if lambda ~= 0
     U = [U; lambda * eye(k)];
     A = [A; zeros(k,n)]; 
@@ -57,10 +79,11 @@ Vt = zeros(k,n);
 %[Q,R] = qr(U);
 %[Q,R] = QRfactorization(U);
 
+%% LLS Solver with QR
 for i = 1:n
     a = A(:, i);
     %x = R\(Q'*a);
-    [x, r] = linsolve(R, Q'*a, opt);
+    [x, ~] = linsolve(R, Q'*a, opt);
     Vt(:,i) = x;
 end
 V = Vt';
