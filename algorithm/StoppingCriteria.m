@@ -11,6 +11,7 @@
 % is aborted and patience time resetted. 
 %
 %% Parameters 
+%
 % i: the current algorithm iteration
 % parameters: list of early stopping parameters
 %  - parameters(1): max number of epochs allowed. 
@@ -20,8 +21,11 @@
 % rel_err: current relative error. 
 % convergence_rate: current convergence rate. 
 % local_stopping_active: number of iterations passed since local stopping was triggered.
+%
 %% Examples
+%
 % Stopping Criteria(1000, 0, 1, True, False)
+%
 %% ---------------------------------------------------------------------------------------------------
 
 function [stop, local_stooping_active] = StoppingCriteria (i, parameters, rel_err, convergence_rate, local_stooping_active, use_global)

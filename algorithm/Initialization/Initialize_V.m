@@ -1,25 +1,35 @@
 %% Initialize_V
+%
 % Create a $V_0$ matrix to begin the alternate optimization cycle. 
+%
 %% Syntax 
+%
 % V = initialize_V(n, k);
 % V = initialize_V(n, k, constraint);
 % V = initialize_V(n, k, constraint, params);
+%
 %% Description 
+%
 % Generate a random values matrix of shape n x k. 
 % Desired properties can be specified as constraints. 
 % If no constrainnts are specified, V is just a random matrix.
+%
 %% Possible Constraint Keys
+%
 % - "dist": 
 %   sample values of V from a distributuio specifying its parameters according to
 %   RANDRAW" module: https://it.mathworks.com/matlabcentral/fileexchange/7309-randraw
 % - "sparse": 
-%    A percentage of the elements of V_0 will be 0s, by default half, or according the d parameter (0 < d < 1) if specified correctly. 
+%    A percentage of the elements of V_0 will be 0s, by default half, or 
+%    according the d parameter (0 < d < 1) if specified correctly. 
 % - "orth":
 %   The returned n x k matrix will be composed by k orthonormal columns.
 % - "low_rank": 
 %   Rank r of V_0 will be lower than k. 
 %   r can be specified as a parameter, otherwise it would just be k-1
+%
 %% Examples
+%
 % Random $V_0$ matrix of shape 30 x 12. 
 % V = initialize_V(30, 12);
 %
@@ -32,6 +42,7 @@
 % Matrix with shape 30 x 12 sampled from a Gaussian distribution with mean
 % mu = 0 and stdev sigma=1. 
 % V = initialize_V(30, 12, "dist", {type:"normal", params: [0, 1]}))
+%
 %% --------------------------------------------------------------------------------------
 
 function [V] = Initialize_V (n, k, constraint_key, param)

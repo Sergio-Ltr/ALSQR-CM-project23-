@@ -1,26 +1,45 @@
 %% ApproximateV
 %
-% Solve the subproblem (1), calculating the solutions of the n LLS
-% involving V and the columns of A, obtaining the m rows of V.   
+% Solve the subproblem (2).
 %
 %% Syntax 
 %
-% All the parameters are mandatory.
+% Approximate V(A, U) 
 % Approximate V(A, U, lambda) 
+% Approximate V(A, U, lambda, bias) 
 %
 %% Description
 % 
+% Construct the new matrix V_s, calculating the solutions of the m LLS
+% involving U and the columns of A, obtaining the n columns of V'. 
+%
+% If setted, regualrization is applied here, a lower identity part is added 
+% to the U matrix (A considering common LLS notation) and appending zeros to 
+% the columns of A (corresponding to y).
+%
+% For the autoencodere experiment, in order to simulate the behaviour of a
+% neural unit, a biased version of the solver is proposed, obtaining as the 
+% U matrix, a mapping from m to k+1, adding a clumn of ones to the V matrix. 
 % 
 %% Parameters 
+%
 % A: the target matrix, shaped m x n. 
 % U: the fixed "parameter" matrix for the step, shaped m x k. 
 % lambda: regularization hypermparameter. 
 %   If setted, it multiplies the I matrix added as the k last columns of U. 
+% bias: determines if V should be computed unbiased  or biased: 
+%   - value = 0, size(V) = [n,k] ) - Unibased V
+%   - value = 1, size(V) = [n+1,k] ) - Encoder biased V
+%   - value = 2, size(V) = [n,k+1] ) - Decoder biased V
+%
 %% Examples
-% Approximate V(A, U_current, 0) 
+%
+% Approximate V(A, U_current) 
 % Approximate V(A, U_current, 0.2) 
+% Approximate V(A, U_current, 0.2, 2)
+%
 %% ------------------------------------------------------------------------
-function [V, err] = ApproximateV (A, U, lambda)
+function [V, err] = ApproximateV (A, U, lambda, bias)
 
 opt.UT = true;
 [m, k] = size (U);  % U size = m x k

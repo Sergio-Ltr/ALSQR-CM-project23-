@@ -1,14 +1,21 @@
 %% Initialize_V
+%
 % Create a A matrix to experiment algorithm behaviour on different configurations. 
+%
 %% Syntax 
+%
 % V = initialize_A(m, n);
 % V = initialize_A(m, n, constraint);
 % V = initialize_A(m, n, constraint, params);
+%
 %% Description 
+%
 % Generate a random values matrix of shape n x k. 
 % Desired properties can be specified as constraints. 
 % If no constrainnts are specified, A is just a random matrix.
-%% Possible Constaint Keys
+%
+%% Possible Constraint Keys
+%
 % - "dist": 
 %   sample values of A from a distributuio specifying its parameters according to
 %   RANDRAW" module: https://it.mathworks.com/matlabcentral/fileexchange/7309-randraw
@@ -16,8 +23,10 @@
 % - "sparse": 
 %    A percentage of the elements of A will be 0s, by default half, or according the d parameter (0 < d < 1) if specified correctly. 
 %
-% - !THE SYMMETRICAL CASE SHOULD BE "HAND-HANDLED"
+% - !THE SYMMETRICAL CASE SHOULD BE "HAND-HANDLED" like A = DD'
+%
 %% Examples
+%
 % Random A matrix of shape 30 x 12. 
 % A = initialize_V(30, 12);
 %
