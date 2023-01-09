@@ -41,6 +41,12 @@
 %
 % verbosity: wether we want or not plots and logs to be computed and displayed. 
 %
+% decides whetehr to have a biased or an unbiased optimization. 
+%   - value = 0: "classical" alternate optimiation, no bias at all. 
+%   - value = 1: biased training (officially alternate optimization). 
+%   - value = 2: unbiased training, biased weights vectors are compouted
+%       only at the end. 
+%
 %% Examples
 %
 %  A = randn(500, 12)
@@ -58,9 +64,9 @@
 %  
 %% ---------------------------------------------------------------------------------------------------
 
-function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity)
+function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias)
 
-%m = size(A,1);
+m = size(A,1);
 n = size(A,2);
 
 %% Handling of the custom parameters. 
@@ -84,7 +90,7 @@ else
 end
 max_epoch = stop_condition(1);
 
-if nargin > 4 
+if nargin > 4 && nargin > 6 && bias == 1
     % Custom Initial V. 
     V = initial_V;
 else 
@@ -100,7 +106,14 @@ else
     verbose = 1;
 end
 
+if nargin > 6 && bias == 1
+    V = [V, zeros(n,1)];
+    V_biased = randn(n+1, k);
+end
+
+
 %% Create arrays to save data for plots. 
+
 residual_step_1 = zeros(max_epoch,1);
 residual_step_2 = zeros(max_epoch,1);
 
@@ -122,9 +135,34 @@ l = max_epoch;
 for i = 1:max_epoch
     
     %% Solve subproblem (1) and (2). 
-    [U,u_err] = ApproximateU(A, V, lambda_u);
-    [V,v_err] = ApproximateV(A, U, lambda_v);
+ 
+    if nargin <= 6 || ( nargin > 6 && bias == 0)
+        % Unbiased Training
+        [U,u_err, ~] = ApproximateU(A, V, lambda_u);
+        size(U)
+        [V,v_err] = ApproximateV(A, U, lambda_v);
+    end
+
+    if nargin > 6 && bias == 1
+        % V correspond to V_dec
+        if i == max_epoch
+            [U,~, V_enc] = ApproximateU(A, V_biased, lambda_u, 1);
+            u_err = norm(A-[ones(m,1), U]*V', "fro");
+        else 
+            [U,~, ~] = ApproximateU(A, V_biased, lambda_u, 1);
+            u_err = norm(A- [ones(m,1), U]*V', "fro");
+        end
+
+        [V,v_err] = ApproximateV(A, U, lambda_v, 2);
+        [V_biased, ~] = ApproximateV(A, U, lambda_v, 1);
+    end
     
+    %% Computing A_k approximation fo the step
+    if nargin > 6 && bias == 1
+        A_k = [ones(m,1), U]*V';
+    else
+        A_k = U*V';
+    end
     %% Save results for the plots.
     residual_step_1(i) = u_err/norm(A, "fro");
     residual_step_2(i) = v_err/norm(A, "fro");
@@ -138,11 +176,11 @@ for i = 1:max_epoch
     u_err_prev = u_err;
     v_err_prev = v_err;
     
+    
     %% Check stopping criteria.
     if i > 1
         rel_err = v_err/norm(A, "fro");
-        convergence_rate = norm(U_prev*V_prev' - U*V', "fro") / norm(U_prev*V_prev', "fro");
-    
+        convergence_rate = norm(A_prev - A_k, "fro") / norm(A_prev, "fro");
         [stop, local_stop] = StoppingCriteria(i, stop_condition, rel_err, convergence_rate, local_stop);
         if stop == true
             l = i; 
@@ -150,10 +188,8 @@ for i = 1:max_epoch
         end
     end
 
-    %% Save U and V.
-    U_prev = U;
-    V_prev = V;
-
+    A_prev = A_k;
+    A
 end
 
 %% Call the plotting functions.
@@ -165,7 +201,16 @@ end
 last_cr_v = convergence_v_story(l);
 last_rs_v = residual_step_2(l);
 
+%% Adjust return values in case of bias
+if  nargin > 6 && bias == 2
+    [V_biased, ~] = ApproximateV(A, V, lambda_v, 1);
+    [~,~,V_enc] = ApproximateU(A, V_biased, lambda_u, 1);
+    [V, ~, ~] =  ApproximateV(A, V, lambda_v, 2);
+end
 
+if nargin > 6 && bias == 1
+    U = V_enc;
+end
 
 %optimalError = optimalK(A, k)
 %residual_step_2(50)

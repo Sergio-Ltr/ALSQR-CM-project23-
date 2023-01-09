@@ -1,16 +1,38 @@
-%% Stopping Criteria 
+%% Plotter
+% 
+% Produces the plots of the algorithm execution. 
 %
 %% Syntax
 %
+% Plotter(residual_history)
+% Plotter(residual_history, convergence_history)
+% Plotter(residual_history, convergence_history, norms_history)
 %
 %% Description
 %
+% Generate the plots of the passed timeseries, handling low level
+% operations like titles, legends, logarithmic scaling and so on. 
 %
 %% Parameters 
 %
+% residual_history: a couple of l dimensional vector, first for subproblem 
+%   (1) and second for subproblem (2). They both contain the normalized 
+%   errors after each LLS solution step.   
+%
+% convergence_history: a couple of l dimensional vector, first for 
+%   subproblem (1) and second for subproblem (2), containing the
+%   convergence rate computed after each update. 
+%
+% norms_history: a couple of l dimensional vector, containing vale of the 
+%   Frobenious norm of the U and V matrix respctively, computed at each 
+%   step after the update.
+    
 %
 %% Examples
 %
+% Plotter(residual_history)
+% Plotter(residual_history, convergence_history)
+% Plotter(residual_history, convergence_history, norms_history)
 %
 %% ---------------------------------------------------------------------------------------------------
 function[] = Plotter(residual_history, convergence_history, norms_history)

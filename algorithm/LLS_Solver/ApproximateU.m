@@ -22,6 +22,8 @@
 % V: the fixed "parameter" matrix for the step, shaped n x k. 
 % lambda: regularization hypermparameter. 
 %   If setted, it multiplies the I matrix added as the k last columns of V. 
+% bias: determines if U should be computed using an  unbiased (value = 0) or biased (value = 1) version of V: 
+% - value = 1 =>  size(V) = [n+1,k] ) - V is the Encoder biased V
 %
 %% Examples
 %
@@ -30,33 +32,39 @@
 %
 %% ------------------------------------------------------------------------
 
-function [U, err] = ApproximateU (A, V, lambda, bias)
-
-opt.UT = true;
+function [U, err, V_enc] = ApproximateU (A, V, lambda, bias)
 [n, k] = size (V);   % V size = n x k (now is not transpose)
 [m, ~]  = size (A); % A size = m x n 
+
+V_enc = ones(n+1, k);
+
+if nargin > 3 && bias == 1
+    A = [ones(m,1), A];
+    % In such case V_enc is given by 
+    % [Q,R] = qr(V_biased)
+    % V_enc = Q * inv(R')
+end
 
 if lambda ~= 0  
     V = [V; lambda * eye(k)]; % reg. V size= (n+k)x k 
     A = [A, zeros(m,k)];  % reg. V size= m x (n+k)
 end
 
-
-A = A';             % here we need A transpose
+%A = A';             % here we need A transpose
 %[~, m]  = size (A); % A transpose size = n x m
 U = zeros(m,k);
 
 [Q, R] = ThinQRfactorization(V);
 
-%[Q,R] = qr(V);
-%[Q,R] = QRfactorization(V);
-
-for i = 1:m
-    a = A(:, i);
-    % x = R\(Q'*a);
-    [x, ~] = linsolve(R, Q'*a, opt);
-    U(i,:) = x';
+if nargin > 3 && bias == 1 
+    V_enc = Q * inv(R)';
 end
 
+U = A*Q*inv(R)';
+
 % to do: use q2 when we have thin QR
-err = norm(A'-U*V', "fro");
+if nargin > 3 && bias == 1
+    err = 0;
+else
+   err = norm(A-U*V', "fro");
+end

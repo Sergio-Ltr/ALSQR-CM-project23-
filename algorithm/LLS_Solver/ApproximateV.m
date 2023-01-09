@@ -55,13 +55,12 @@ if nargin > 3 && bias == 1
     n = n + 1;
     % In such case V_enc is given by 
     % [Q,R] = qr(V_biased)
-    % V_enc = Q * inv(R')
+    % V_enc = Q(:,1:k) * inv(R(1:k,1:k)')
 end
 
 %% Prepare to compute V_dec
 if nargin > 3 && bias == 2
     U = [ones(m,1), U];
-    size(U)
     k = k + 1;
     % In this case V_dec = V_biased
 end
@@ -72,6 +71,7 @@ if lambda ~= 0
     A = [A; zeros(k,n)]; 
 end
 
+%% LLS Solver with QR
 Vt = zeros(k,n);
 
 [Q, R] = ThinQRfactorization(U);
@@ -79,7 +79,6 @@ Vt = zeros(k,n);
 %[Q,R] = qr(U);
 %[Q,R] = QRfactorization(U);
 
-%% LLS Solver with QR
 for i = 1:n
     a = A(:, i);
     %x = R\(Q'*a);
