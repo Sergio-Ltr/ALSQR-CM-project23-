@@ -54,6 +54,10 @@
 %   V will contain only zeros (epsions = 1e-5) and ones, hoping to randomly 
 %   catch interesting feartures. 
 %   Density of ones can be sepcified in the param in [0,1], default d = 0.5. 
+%
+% - "prob"
+%   Each column of the matrix is a sum to one vector of random
+%   probabilities.
 %   
 %% Examples
 %
@@ -115,6 +119,9 @@ if nargin > 2
             d = param;
         end
         mat = full(sprandn(n, k, d)) ~= 0; % = Vo (starting point) 
+    elseif constraint_key == "prob"
+        mat = rand(n,k);
+        mat = mat./sum(mat);
     end  
 end
 
