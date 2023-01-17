@@ -104,7 +104,7 @@ if nargin > 2
         end
         mat = full(sprandn(n, k, d)); % = Vo (starting point) 
     elseif  constraint_key == "orth"
-        mat = orth(mat); % output a matrix of orthogonal rows 
+        mat = orth(randn(k,n))';% output a matrix of orthogonal columns. 
     elseif  constraint_key == "low_rank"
         r = k - 1;
         if param > 1 && param < k
