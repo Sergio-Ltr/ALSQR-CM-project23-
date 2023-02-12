@@ -90,7 +90,7 @@ else
 end
 max_epoch = stop_condition(1);
 
-if nargin > 4 && nargin > 6 && bias == 1
+if nargin > 4 
     % Custom Initial V. 
     V = initial_V;
 else 
