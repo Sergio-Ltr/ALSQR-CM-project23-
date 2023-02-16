@@ -1,2 +1,0 @@
-id, mean_cr, std_cr, mean_rs, std_rs, last_epoch_mean, last_epoch_std, tot_time_mean, tot_time_std, epoch_time_mean, epoch_time_std, precision_mean, precision_std, rel_precision_mean, rel_precision_std, normVinit_mean, normVinit_std, normVend_mean, normVend_std
-1,1,1.4886e-07,0.42748,1.1351e-06,186.2,33.656,1.2477,0.21913,0.0067039,0.00014368,0.031164,3.8401e-06,0.00062173,7.6611e-08,0.81694,0.0023864,27.508,0.0010163
