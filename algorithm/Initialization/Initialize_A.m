@@ -50,12 +50,14 @@ if nargin > 2
         dist_type = cell2mat(param(2:end));
         values = randraw(dist_key, dist_type, m*n);
         mat = reshape(values, [m,n]);
+    
     elseif  constraint_key == "sparse" %second item is density coefficient 0 < d < 1.  
         d = 0.5;
         if param > 0 && param <= 1
             d = param;
         end
         mat = full(sprandn(m, n, d));
+    
     %elseif  constraint_key == "symm"
         %mat = orth(mat); % output a matrix of orthogonal rows 
     end  

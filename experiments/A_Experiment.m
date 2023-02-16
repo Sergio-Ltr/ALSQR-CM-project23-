@@ -21,25 +21,6 @@
 %% ---------------------------------------------------------------------------------------------------
 function [value2test] = A_Experiment (experiment)
 
-%{ 
-Experiment on A matrix: 
----> Choose one of the possibile experiment values 
-
-(1) Experimens wrt A properties:
-
-    sparsity
-    distribution
-    simmetry
-
-(2) Experimens wrt A shapes:
-
-    tall_thin
-    short_fat
-    almost_square
-    square
-    decreasing_rank
-%}
-
 value2test = containers.Map;
 
 if experiment == "sparsity"
@@ -106,12 +87,6 @@ elseif experiment == "distribution"
 else
     fprintf("Experiment type is not well-defined")
 end 
-
-% elseif experiment == "tall_thin"
-% elseif experiment == "short_fat"
-% elseif experiment == "almost_square"
-% elseif experiment == "square"
-% elseif experiment == "decreasing_rank" 
 
 
 

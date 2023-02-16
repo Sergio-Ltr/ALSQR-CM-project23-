@@ -92,33 +92,40 @@ end
 
 %Constraint application the V_0 matrix. 
 if nargin > 2
+    
     if constraint_key == "dist" %second item is distribution type (i.e. "normal"). Possibilities here: 
         dist_key = char(param(1));
         dist_type = cell2mat(param(2:end));
         values = randraw(dist_key, dist_type, n*k);
         mat = reshape(values, [n,k]);
+
     elseif  constraint_key == "sparse" %second item is density coefficient 0 < d < 1.  
         d = 0.5;
         if param > 0 && param < 1
             d = param;
         end
         mat = full(sprandn(n, k, d)); % = Vo (starting point) 
+    
     elseif  constraint_key == "orth"
-        mat = orth(randn(k,n))';% output a matrix of orthogonal columns. 
+        mat = orth(randn(k,n));% output a matrix of orthogonal columns. 
+    
     elseif  constraint_key == "low_rank"
         r = k - 1;
         if param > 1 && param < k
             r = param;
         end
         mat = randn(n,r)*rand(r,k); % resulting matrix will have rank r by construction.  
+
     elseif constraint_key == "uniform"
         mat = 1/k * ones(n,k);
+    
     elseif constraint_key == "feature-selection"
         d = 0.5;
         if param > 0 && param < 1
             d = param;
         end
         mat = full(sprandn(n, k, d)) ~= 0; % = Vo (starting point) 
+    
     elseif constraint_key == "prob"
         mat = rand(n,k);
         mat = mat./sum(mat);

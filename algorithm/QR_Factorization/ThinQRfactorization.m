@@ -1,3 +1,25 @@
+%% ThinQRfactorization 
+% Compute Thin QR factorization of a tall thin matrix A
+%
+%% Syntax
+%[Q1,R1] = ThinQRfactorization (A)
+%
+%% Description
+% Given A matrix compute its size, obtain m and n 
+% initialize Q1 as identity matrix m xn 
+% compute houseolder vectors u and s for each column of the matrix A
+% store u and s i the lower part of the A matrix
+% get R1 from A and compute Q1 iterating over column starting from the last
+% one
+%
+%% Parameters 
+% A : m x n matrix to be factorized with m>n
+%
+%% Examples
+% A = randn(30, 10) 
+%[Q1,R1] = ThinQRfactorization (A)
+%
+%% ------------------------------------------------------------------------
 function [Q1,R1] = ThinQRfactorization (A)
 
 [m, n] = size(A);   % dimension of matrix A

@@ -52,7 +52,6 @@ end
 
 %A = A';             % here we need A transpose
 %[~, m]  = size (A); % A transpose size = n x m
-U = zeros(m,k);
 
 [Q, R] = ThinQRfactorization(V);
 
@@ -61,6 +60,16 @@ if nargin > 3 && bias == 1
 end
 
 U = A*Q*inv(R)';
+
+%% Alternative computation for U 
+%{
+U = zeros(m,k);
+for i = 1:m
+    a = A(:, i);
+    [x, ~] = linsolve(R, Q'*a, opt);
+    U(i,:) = x';
+end
+%}
 
 % to do: use q2 when we have thin QR
 if nargin > 3 && bias == 1

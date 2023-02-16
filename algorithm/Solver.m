@@ -139,7 +139,6 @@ for i = 1:max_epoch
     if nargin <= 6 || ( nargin > 6 && bias == 0)
         % Unbiased Training
         [U,u_err, ~] = ApproximateU(A, V, lambda_u);
-        size(U)
         [V,v_err] = ApproximateV(A, U, lambda_v);
     end
 
@@ -189,7 +188,6 @@ for i = 1:max_epoch
     end
 
     A_prev = A_k;
-    A
 end
 
 %% Call the plotting functions.
