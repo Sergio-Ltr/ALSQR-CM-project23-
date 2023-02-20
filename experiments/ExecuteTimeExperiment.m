@@ -1,13 +1,12 @@
 function [] = ExecuteTimeExperiment(values)
 
 type = values('type');
-
-combs = GetTimeCombinations(values);
+combs = GetCombinations(values);
 
 % compute total number of executions and combinations
 time_repetita = 5; 
 [~, tot_combinations] = size(combs);
-tot_executions = time_repetita * tot_combinations;
+%tot_executions = time_repetita * tot_combinations;
 
 
 wb = waitbar(0,'Start executing '+type+' esperiment');
@@ -61,11 +60,11 @@ for j = 1:tot_combinations
         for i = 1:time_repetita
             
             % define matrix A
-            A = Initialize_A(m,n,'sparse',d);
+            A = Initialize_A(m,n);
     
             tic 
             % solve the problem with our algorithm
-            [U,V] = OptSolver(A, k, stop_parameter, 1); 
+            [~,~] = OptSolver(A, k, stop_parameter, 1); 
             %appA = U*V';        
             solver_time_elapsed(i) = toc;
 

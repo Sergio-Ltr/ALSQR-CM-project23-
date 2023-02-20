@@ -47,6 +47,7 @@ end
 
 R1 = triu(A(1:n,:));
 
+
 %{
 for i = 1:n
     if nnz(R1(i, i:end)) == 0 

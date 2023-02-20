@@ -54,6 +54,7 @@ end
 %[~, m]  = size (A); % A transpose size = n x m
 
 [Q, R] = ThinQRfactorization(V);
+%[Q, R] =qr(V, 0);
 
 if nargin > 3 && bias == 1 
     V_enc = Q * inv(R)';

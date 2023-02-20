@@ -74,10 +74,10 @@ end
 %% LLS Solver with QR
 Vt = zeros(k,n);
 
-[Q, R] = ThinQRfactorization(U);
+%[Q, R] = ThinQRfactorization(U);
 
-%[Q,R] = qr(U);
-%[Q,R] = QRfactorization(U);
+%[Q,R] = qr(U, 0);
+[Q,R] = QRfactorization(U);
 
 for i = 1:n
     a = A(:, i);

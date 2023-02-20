@@ -100,7 +100,7 @@ end
 
 if nargin > 5 && verbosity == 0
     % Not verbose only if specified. 
-    verbose = 0;
+    verbose = 1;
 else
     % Default behaviour is verbose. 
     verbose = 1;
@@ -191,6 +191,7 @@ end
 
 %% Call the plotting functions.
 if verbose
+    hello = "hello"
     Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ])
 end
 

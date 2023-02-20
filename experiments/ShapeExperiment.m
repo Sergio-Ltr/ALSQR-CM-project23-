@@ -13,6 +13,7 @@
 %
 %
 %% ---------------------------------------------------------------------------------------------------
+%{
 function [] = ShapeExperiment()
 
 stop_parameter = [100, 10e-3, 10e-5, 10];
@@ -77,4 +78,5 @@ fid = fopen('sparsity_experiment.csv','w');
 fprintf(fid,'%s\n',textHeader)
 fclose(fid)
 dlmwrite('sparsity_experiment.csv',data, '-append');
+%}
 
