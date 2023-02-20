@@ -26,7 +26,7 @@
 % error = optimalK(A, k)
 % 
 %% ---------------------------------------------------------------------------------------------------
-function [error] = optimalK (A, k)
+function [error, M] = optimalK (A, k)
 
 % compute SVD
 [U, S, V] = svd(A);
@@ -40,5 +40,5 @@ V = V(:, 1:k);
 M = U*S*V';
 
 % Compute optimal error
-error = norm(M-A, "fro");
+error = norm(A-M, "fro");
 

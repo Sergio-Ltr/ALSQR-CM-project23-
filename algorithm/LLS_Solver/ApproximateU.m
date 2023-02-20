@@ -40,7 +40,7 @@ opt.UT = true;
 
 V_enc = ones(n+1, k);
 
-if nargin > 3 && bias == 1
+if nargin > 4 && bias == 1
     A = [ones(m,1), A];
     % In such case V_enc is given by 
     % [Q,R] = qr(V_biased)
@@ -52,10 +52,10 @@ if lambda ~= 0
     A = [A, zeros(m,k)];  % reg. V size= m x (n+k)
 end
 
-[Q, R] = ThinQRfactorization(V);
-%[Q, R] =qr(V, 0);
+%[Q, R] = ThinQRfactorization(V);
+[Q, R] =qr(V, 0);
 
-if nargin > 3 && bias == 1 
+if nargin > 4 && bias == 1
     V_enc = Q * inv(R)';
 end
 
@@ -65,7 +65,6 @@ for i = 1:m
     [x, ~] = linsolve(R, Q', opt);
     U(i,:) = a*x';
 end
-
 
 %% Alternative computation for U 
 %U = A*Q*inv(R)';

@@ -91,8 +91,12 @@ end
 max_epoch = stop_condition(1);
 
 if nargin > 4 
-    % Custom Initial V. 
-    V = initial_V;
+    if size(initial_V, 2) == k 
+        % Custom Initial V. 
+        V = initial_V;
+    else
+        error("V size does not match with k ");
+    end
 else 
     % Random Initial V.
     V = Initialize_V(n, k); 
@@ -100,7 +104,7 @@ end
 
 if nargin > 5 && verbosity == 0
     % Not verbose only if specified. 
-    verbose = 1;
+    verbose = 0;
 else
     % Default behaviour is verbose. 
     verbose = 1;
@@ -110,6 +114,12 @@ if nargin > 6 && bias == 1
     V = [V, zeros(n,1)];
     V_biased = randn(n+1, k);
 end
+
+%% Compute optimal error and A*
+[opt_err, optA] = optimalK(A, k);
+
+opt_err
+size(A)
 
 
 %% Create arrays to save data for plots. 
@@ -123,8 +133,13 @@ convergence_v_story = zeros(max_epoch,1);
 u_norm_story = zeros(max_epoch,1);
 v_norm_story = zeros(max_epoch,1);
 
-u_err_prev = 1;
-v_err_prev = 1;
+A_norm_story = zeros(max_epoch*2, 1);
+
+%u_err_prev = 1;
+%v_err_prev = 1;
+
+%u_err2_prev = 1;
+%v_err2_prev = 1;
 
 %% Early stooping parameter;
 
@@ -138,7 +153,10 @@ for i = 1:max_epoch
     if nargin <= 6 || ( nargin > 6 && bias ~= 1) 
         % Unbiased Training
         [U,u_err, V_enc] = ApproximateU(A, V, lambda_u,0);
+         A_s1 = U*V';
         [V,v_err] = ApproximateV(A, U, lambda_v);
+         A_s2 = U*V';
+
     end
 
     if nargin > 6 && bias == 1
@@ -146,6 +164,7 @@ for i = 1:max_epoch
         if i == max_epoch
             [U,~, V_enc] = ApproximateU(A, V_biased, lambda_u, 1);
             u_err = norm(A-[ones(m,1), U]*V', "fro");
+            
         else 
             [U,~, ~] = ApproximateU(A, V_biased, lambda_u, 1);
             u_err = norm(A- [ones(m,1), U]*V', "fro");
@@ -161,20 +180,30 @@ for i = 1:max_epoch
     else
         A_k = U*V';
     end
+    
     %% Save results for the plots.
     residual_step_1(i) = u_err/norm(A, "fro");
     residual_step_2(i) = v_err/norm(A, "fro");
     
-    convergence_u_story(i) = u_err/u_err_prev;
-    convergence_v_story(i) = v_err/v_err_prev;
+    %convergence_u_story(i) = u_err/u_err_prev;
+    %convergence_v_story(i) = v_err/v_err_prev;
+
+    convergence_u_story(i) = (u_err - opt_err) /opt_err;
+    convergence_v_story(i) = (v_err - opt_err) /opt_err;
+
 
     u_norm_story(i) = norm(U, "fro");
     v_norm_story(i) = norm(V, "fro");
 
-    u_err_prev = u_err;
-    v_err_prev = v_err;
-    
-    
+    A_norm_story((i-1)*2+1) = norm(A_s1, "fro");
+    A_norm_story(i*2) = norm(A_s2, "fro");
+
+    %u_err_prev = u_err;
+    %v_err_prev = v_err;
+
+    %u_err2_prev = u_err2;
+    %v_err2_prev = v_err2;
+       
     %% Check stopping criteria.
     if i > 1
         rel_err = v_err/norm(A, "fro");
@@ -191,7 +220,7 @@ end
 
 %% Call the plotting functions.
 if verbose
-    Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ])
+    Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ], [A_norm_story], norm(optA, "fro"))
 end
 
 %% Return last values

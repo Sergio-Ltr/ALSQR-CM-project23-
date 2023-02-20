@@ -74,8 +74,8 @@ end
 %% LLS Solver with QR
 Vt = zeros(k,n);
 
-[Q, R] = ThinQRfactorization(U);
-%[Q,R] = qr(U, 0);
+%[Q, R] = ThinQRfactorization(U);
+[Q,R] = qr(U, 0);
 %[Q,R] = QRfactorization(U);
 
 for i = 1:n
@@ -88,3 +88,5 @@ V = Vt';
 
 % to do: use q2 when we have thin QR
 err = norm(A-U*V', "fro");
+
+

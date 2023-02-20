@@ -35,33 +35,50 @@
 % Plotter(residual_history, convergence_history, norms_history)
 %
 %% ---------------------------------------------------------------------------------------------------
-function[] = Plotter(residual_history, convergence_history, norms_history)
+function[] = Plotter(residual_history, convergence_history, norms_history, normA_history, normoptA)
  % Top two plots
-tiledlayout(nargin,2);
+tiledlayout(nargin,3);
+
 
 %First plot: Error through iterations
 if nargin > 0
-    residual_history = log(residual_history);
+     
+
+    residual_history = log1p(residual_history);
     nexttile;
     %residual at step 1
-    plot(residual_history(:, 1));
+    plot(residual_history(:,1));
     title('residual step 1');
     nexttile;
     %residual at step 2
     plot(residual_history(:, 2));
     title('residual step 2');
+
+    residual_history = residual_history';
+    nexttile;
+    %residual at step 1
+    plot(residual_history(:));
+    title('full residual');
 end 
+
 
 %Second plot: Convergence rate through iterations
 if nargin > 1
-    convergence_history = log(convergence_history);
+    convergence_history = log1p(convergence_history);
     nexttile;
     plot(convergence_history(:, 1));
     title('convergence U');
     nexttile;
     plot(convergence_history(:, 2));
     title('convergence V');
+
+    convergence_history = convergence_history';
+    nexttile;
+    %residual at step 1
+    plot(convergence_history(:));
+    title('full convergence');
 end 
+
 
 %Third plot: Param matrices norms through iterations
 if nargin > 2
@@ -72,4 +89,14 @@ if nargin > 2
     nexttile;
     plot(norms_history(:, 2));
     title('V-norm');
+
+    
+    nexttile;
+    %residual at step 1
+    plot(normA_history(:))
+    hold on
+    plot( ones( size(normA_history,1))*normoptA);
+    title('A norm');
+
 end
+
