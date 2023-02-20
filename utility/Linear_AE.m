@@ -21,7 +21,7 @@
 % k = 4
 % AE = Linear_AE(A, k)
 %% ---------------------------------------------------------------------------------------------------
-function [AE] =  Linear_AE(data, k)
+function [AE] =  Linear_AE(tr, k)
     net = patternnet;
 
     net.layers{1}.name = "Encoder"; 
@@ -30,8 +30,11 @@ function [AE] =  Linear_AE(data, k)
 
     net.layers{2}.name = "Decoder";
     net.layers{2}.transferFcn = 'purelin';
+    net.layers{2}.dimensions = size(tr,1);
+    net.trainParam.epochs = 25;
+    net.performFcn = 'mse';
 
-    net = train(net, data', data');
+    net = train(net, awgn(tr,10,'measured'));
     view(net);
 
     AE = net;
@@ -39,8 +42,15 @@ function [AE] =  Linear_AE(data, k)
     AE.LW{2}; %Encoder weights !! But we also have biases | n x k 
     AE.b{1}; %Encoder biases | k x 1
 
-    AE.IW{2}; %Decoder weights !! But we also have biases | k x n
+    AE.IW{1}; %Decoder weights !! But we also have biases | k x n
     AE.b{2}; % Decoder biases. | n x 1
     
+
+   %size(AE.LW{2})
+   %size(AE.b{1})
+
+   %size(AE.IW{1})
+   %size(AE.b{2})
+ 
     
 

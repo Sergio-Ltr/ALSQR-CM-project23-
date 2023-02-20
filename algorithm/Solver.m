@@ -135,10 +135,9 @@ l = max_epoch;
 for i = 1:max_epoch
     
     %% Solve subproblem (1) and (2). 
- 
-    if nargin <= 6 || ( nargin > 6 && bias == 0)
+    if nargin <= 6 || ( nargin > 6 && bias ~= 1) 
         % Unbiased Training
-        [U,u_err, ~] = ApproximateU(A, V, lambda_u);
+        [U,u_err, V_enc] = ApproximateU(A, V, lambda_u,0);
         [V,v_err] = ApproximateV(A, U, lambda_v);
     end
 
@@ -201,12 +200,13 @@ last_rs_v = residual_step_2(l);
 
 %% Adjust return values in case of bias
 if  nargin > 6 && bias == 2
-    [V_biased, ~] = ApproximateV(A, V, lambda_v, 1);
+    [V_biased, ~] = ApproximateV(A, U, lambda_v, 1);
     [~,~,V_enc] = ApproximateU(A, V_biased, lambda_u, 1);
-    [V, ~, ~] =  ApproximateV(A, V, lambda_v, 2);
+    [V, ~] =  ApproximateV(A, U, lambda_v, 2);
 end
 
-if nargin > 6 && bias == 1
+if nargin > 6
+    
     U = V_enc;
 end
 
