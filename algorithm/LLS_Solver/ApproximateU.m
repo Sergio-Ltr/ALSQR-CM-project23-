@@ -33,6 +33,8 @@
 %% ------------------------------------------------------------------------
 
 function [U, err, V_enc] = ApproximateU (A, V, lambda, bias)
+
+opt.UT = true;
 [n, k] = size (V);   % V size = n x k (now is not transpose)
 [m, ~]  = size (A); % A size = m x n 
 
@@ -50,9 +52,6 @@ if lambda ~= 0
     A = [A, zeros(m,k)];  % reg. V size= m x (n+k)
 end
 
-%A = A';             % here we need A transpose
-%[~, m]  = size (A); % A transpose size = n x m
-
 [Q, R] = ThinQRfactorization(V);
 %[Q, R] =qr(V, 0);
 
@@ -60,17 +59,17 @@ if nargin > 3 && bias == 1
     V_enc = Q * inv(R)';
 end
 
-U = A*Q*inv(R)';
-
-%% Alternative computation for U 
-%{
 U = zeros(m,k);
 for i = 1:m
-    a = A(:, i);
-    [x, ~] = linsolve(R, Q'*a, opt);
-    U(i,:) = x';
+    a = A(i, :);
+    [x, ~] = linsolve(R, Q', opt);
+    U(i,:) = a*x';
 end
-%}
+
+
+%% Alternative computation for U 
+%U = A*Q*inv(R)';
+
 
 % to do: use q2 when we have thin QR
 if nargin > 3 && bias == 1

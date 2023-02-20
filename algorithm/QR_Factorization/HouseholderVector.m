@@ -29,6 +29,7 @@ if x(1) >= 0, s = -s; end
 
 v = x;
 v(1) = v(1) - s;
+
 if all(v(:) == 0)
     u = v;  
 else

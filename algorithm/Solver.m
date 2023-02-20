@@ -191,7 +191,6 @@ end
 
 %% Call the plotting functions.
 if verbose
-    hello = "hello"
     Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ])
 end
 
