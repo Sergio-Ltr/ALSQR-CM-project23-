@@ -43,7 +43,7 @@
 %
 %% ------------------------------------------------------------------------
 
-function [V, err] = ApproximateV (A, U, lambda, bias)
+function [V, A_s, Q, R] = ApproximateV (A, U, lambda, bias)
 
 opt.UT = true;
 [m, k] = size (U);  % U size = m x k
@@ -74,19 +74,16 @@ end
 %% LLS Solver with QR
 Vt = zeros(k,n);
 
-%[Q, R] = ThinQRfactorization(U);
-[Q,R] = qr(U, 0);
-%[Q,R] = QRfactorization(U);
+[Q, R] = ThinQRfactorization(U);
+%[Q,R] = qr(U, 0);
 
 for i = 1:n
     a = A(:, i);
-    %x = R\(Q'*a);
     [x, ~] = linsolve(R, Q'*a, opt);
     Vt(:,i) = x;
 end
 V = Vt';
 
-% to do: use q2 when we have thin QR
-err = norm(A-U*V', "fro");
+A_s = U(1:m,:)*V';
 
 

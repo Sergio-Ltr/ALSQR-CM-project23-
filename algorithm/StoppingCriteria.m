@@ -17,7 +17,6 @@
 %  - parameters(1): max number of epochs allowed. 
 %  - parameters(2): epsilon threshold for relative error. 
 %  - parameters(3): xi threshold for converngence rate
-%  - parameters(4): patience, number of iterations to be waited after local stop criteria being triggered.  
 % rel_err: current relative error. 
 % convergence_rate: current convergence rate. 
 % local_stopping_active: number of iterations passed since local stopping was triggered.

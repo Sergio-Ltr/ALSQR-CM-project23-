@@ -7,16 +7,17 @@
 %
 %  [U,V] = Solver(A, k) 
 %  [U,V] = Solver(A, k, [lambda_u, lambda_v])
-%  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi, patience])
-%  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi, patience], V_0)
-%  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi, patience], V_0, verbosity)
+%  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi])
+%  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi], V_0)
+%  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi], V_0, verbosity)
 %   
 %% Description
 %
 % Execute the alternate optimization loop, solving at each iteration the
 % two subproblmes (1) and (2) as sets of LLS problmes. 
 %
-% Input constraint are checked here, if any (hyper)parameter is not specified, default values are applied here. 
+% Input constraint are checked here, if any (hyper)parameter is not specified, 
+% default values are applied here. 
 % 
 % Values used to generate the plots are collected here and passed to the
 % plotter function (unless verbosity is disabled). 
@@ -30,19 +31,20 @@
 % reg_parameter: The two ridge regression parameter to use for subproblem
 %   (1) and (2) respectively
 %
-% stop_criteria: A four element array containing: 
+% stop_criteria: A three element array containing: 
 %  -1): max number of epochs allowed. 
-%  -2): epsilon threshold for relative error. 
-%  -3): xi threshold for converngence rate
-%  -4): patience, number of iterations to be waited after local stop criteria being triggered.  
+%  -2): epsilon threshold for real approximation error. 
+%  -3): xi threshold for heuristic approximation error. 
 % for more information check the "StoppingCriteria" function. 
 %
 % initial_V: The V_0 matrix to use at the very first iteration to compute U_1.
 %
 % verbosity: wether we want or not plots and logs to be computed and displayed. 
 %
-% decides whetehr to have a biased or an unbiased optimization. 
-%   - value = 0: "classical" alternate optimiation, no bias at all. 
+% bias: decides whetehr to have a biased or an unbiased optimization, 
+%   if passed, V_enc (aka V^+) is returned instead of U anyway. 
+%
+%   - value = 0: "classical" alternate optimiation, no bias at all,  
 %   - value = 1: biased training (officially alternate optimization). 
 %   - value = 2: unbiased training, biased weights vectors are compouted
 %       only at the end. 
@@ -52,25 +54,26 @@
 %  A = randn(500, 12)
 %  V_0 = ones(12, 12)
 
-%  [U,V] = Solver(A, 8) 
-%
-%  No regularization, 100 epochs without early stopping, random (full
-%  column rank) initial V_0, verbose
+%  [U,V] = Solver(A, 8) <- Default config: No regularization, 100 epochs 
+%   without early stopping, random (full column rank) initial V_0, verbose
 %  
 %  [U,V] = Solver(A, 8, [0.5, 0.5]) <- Custom Regularization 
-%  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0, 0]) <- Custom Early Stopping
-%  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0, 0], V_0) <- Custom Initial V
-%  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0, 0], V_0, 0) <- Non verbose
+
+%  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0]) <- Custom Stopping
+%   criterisa: 200 epochs, no early stopping.
+
+%  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0], V_0) <- Custom Initial V
+
+%  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0], V_0, 0) <- Non verbose
 %  
 %% ---------------------------------------------------------------------------------------------------
 
-function [U, V, l, last_cr_v, last_rs_v] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias)
+function [U, V, l] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias)
 
 m = size(A,1);
 n = size(A,2);
 
 %% Handling of the custom parameters. 
-
 if nargin > 2 
     % Custom Tikonov regularization hyper-parameter (lambda_u, lamda_v). 
     lambda_u = reg_parameter(1);
@@ -84,11 +87,19 @@ end
 if nargin > 3 
     % Custom stopping criteria.
     stop_condition = stop_param;
+    l = stop_condition(1);
+    eps = stop_condition(2);
+    xi = stop_condition(3);
 else 
     % No stop criteria, only dummy iteration.
-    stop_condition = [100, 0,0,0]; 
+    % Stop_condition = [100, 0,0]; 
+    l = 100;
+    eps = 0;
+    xi = 0;
 end
-max_epoch = stop_condition(1);
+
+eps_stop_epoch = l;
+xi_stop_epoch = l;
 
 if nargin > 4 
     if size(initial_V, 2) == k 
@@ -115,117 +126,149 @@ if nargin > 6 && bias == 1
     V_biased = randn(n+1, k);
 end
 
-%% Compute optimal error and A*
-[opt_err, optA] = optimalK(A, k);
+[opt_err, opt_A] = optimalK(A, k);
 
-opt_err
-size(A)
+if verbose == 1
+    [opt_err, opt_A] = optimalK(A, k);
 
+    %% Compute optimal error and A*
+   
 
-%% Create arrays to save data for plots. 
+    %% Create arrays to save data for plots. 
+    residual_s1_story = zeros(l,1);
+    residual_s2_story = zeros(l,1);
+    
+    residual_H_s1_story = zeros(l,1);
+    residual_H_s2_story = zeros(l,1);
+    
+    convergence_u_story = zeros(l,1);
+    convergence_v_story = zeros(l,1);
+    
+    u_norm_story = zeros(l,1);
+    v_norm_story = zeros(l,1);
+    
+    R_U_norm_story = zeros(l,1);
+    R_V_norm_story = zeros(l,1);
+    
+    H_s1_norm_story = zeros(l,1);
+    H_s2_norm_story = zeros(l,1);
+    
+    A1_norm_story = zeros(l, 1);
+    A2_norm_story = zeros(l, 1);
+end
 
-residual_step_1 = zeros(max_epoch,1);
-residual_step_2 = zeros(max_epoch,1);
-
-convergence_u_story = zeros(max_epoch,1);
-convergence_v_story = zeros(max_epoch,1);
-
-u_norm_story = zeros(max_epoch,1);
-v_norm_story = zeros(max_epoch,1);
-
-A_norm_story = zeros(max_epoch*2, 1);
-
-%u_err_prev = 1;
-%v_err_prev = 1;
-
-%u_err2_prev = 1;
-%v_err2_prev = 1;
-
-%% Early stooping parameter;
-
-local_stop = 0; 
-l = max_epoch;
+%%Initialize Early Stopping Variables
+R_U = randn(k,k);
+prev_A = Inf;
+prev_H= Inf;
 
 %% Alternate optimization loop.
-for i = 1:max_epoch
+for i = 1:l
     
+    %% Chek wether if it's time to stop
+    if i - 1 == eps_stop_epoch        
+        %if verbose == 0
+            %break;
+        %else
+            disp(["eps-stop", eps_stop_epoch])
+            disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
+        %end
+    end
+
+    if i - 1 == xi_stop_epoch
+        disp(["xi-stop", xi_stop_epoch])
+        disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
+
+        %if verbose == 0
+            %break;
+        %else
+            disp(["xi-stop", xi_stop_epoch])
+            disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
+        %end
+    end
+
     %% Solve subproblem (1) and (2). 
+    % Unbiased Training
     if nargin <= 6 || ( nargin > 6 && bias ~= 1) 
-        % Unbiased Training
-        [U,u_err, V_enc] = ApproximateU(A, V, lambda_u,0);
-         A_s1 = U*V';
-        [V,v_err] = ApproximateV(A, U, lambda_v);
-         A_s2 = U*V';
-
+        % Subproblem (1)
+        [U,A_s1, V_enc, ~, R_V] = ApproximateU(A, V, lambda_u,0);
+        H_s1 = R_U*R_V';
+        % Subproblem (2)
+        [V,A_s2, ~, R_U] = ApproximateV(A, U, lambda_v);
+        H_s2 = R_U*R_V';
     end
 
+    %Biased Training
     if nargin > 6 && bias == 1
-        % V correspond to V_dec
-        if i == max_epoch
-            [U,~, V_enc] = ApproximateU(A, V_biased, lambda_u, 1);
-            u_err = norm(A-[ones(m,1), U]*V', "fro");
-            
-        else 
-            [U,~, ~] = ApproximateU(A, V_biased, lambda_u, 1);
-            u_err = norm(A- [ones(m,1), U]*V', "fro");
-        end
-
-        [V,v_err] = ApproximateV(A, U, lambda_v, 2);
-        [V_biased, ~] = ApproximateV(A, U, lambda_v, 1);
+        % Subproblem (1)
+        [U, ~, V_enc, ~, R_V] = ApproximateU(A, V_biased, lambda_u, 1);
+        A_s1 = [ones(m,1), U]*V';
+        H_s1 = R_U*R_V';
+        % Subproblem (2)
+        [V, A_s2] = ApproximateV(A, U, lambda_v, 2);
+        [V_biased, ~, ~, R_U] = ApproximateV(A, U, lambda_v, 1);
+        H_s2 = R_U*R_V';
     end
-    
-    %% Computing A_k approximation fo the step
-    if nargin > 6 && bias == 1
-        A_k = [ones(m,1), U]*V';
-    else
-        A_k = U*V';
-    end
-    
-    %% Save results for the plots.
-    residual_step_1(i) = u_err/norm(A, "fro");
-    residual_step_2(i) = v_err/norm(A, "fro");
-    
-    %convergence_u_story(i) = u_err/u_err_prev;
-    %convergence_v_story(i) = v_err/v_err_prev;
 
-    convergence_u_story(i) = (u_err - opt_err) /opt_err;
-    convergence_v_story(i) = (v_err - opt_err) /opt_err;
-
-
-    u_norm_story(i) = norm(U, "fro");
-    v_norm_story(i) = norm(V, "fro");
-
-    A_norm_story((i-1)*2+1) = norm(A_s1, "fro");
-    A_norm_story(i*2) = norm(A_s2, "fro");
-
-    %u_err_prev = u_err;
-    %v_err_prev = v_err;
-
-    %u_err2_prev = u_err2;
-    %v_err2_prev = v_err2;
-       
     %% Check stopping criteria.
-    if i > 1
-        rel_err = v_err/norm(A, "fro");
-        convergence_rate = norm(A_prev - A_k, "fro") / norm(A_prev, "fro");
-        [stop, local_stop] = StoppingCriteria(i, stop_condition, rel_err, convergence_rate, local_stop);
-        if stop == true
-            l = i; 
-            break
-        end
+    if eps ~= 0 && norm(prev_A - A_s2, "fro") < eps && eps_stop_epoch == l
+        norm(prev_A - A_s2, "fro");
+        eps_stop_epoch = i;
+    end
+    
+    if xi ~= 0 && norm(prev_H - H_s2, "fro") < xi && xi_stop_epoch == l
+        norm(prev_H - H_s2, "fro");
+        xi_stop_epoch = i;
     end
 
-    A_prev = A_k;
+    %% Save results for the plots.
+    if verbose == 1
+        r_s1 = norm(prev_A - A_s1, "fro");
+        r_s2 = norm(A_s1 - A_s2, "fro");
+    
+        residual_s1_story(i) = r_s1;
+        residual_s2_story(i) = r_s2;
+    
+        r_H_s1 = norm(prev_H - H_s1, "fro");
+        r_H_s2 = norm(H_s1 - H_s2 , "fro");
+    
+        residual_H_s1_story(i) = r_H_s1;
+        residual_H_s2_story(i) = r_H_s2;
+    
+        convergence_u_story(i) = (norm(A_s1 - opt_A, "fro") - opt_err) /opt_err;
+        convergence_v_story(i) = (norm(A_s2 - opt_A, "fro") - opt_err) /opt_err;
+    
+        u_norm_story(i) = norm(U, "fro");
+        v_norm_story(i) = norm(V, "fro");
+    
+        R_U_norm_story(i) = norm(R_U);
+        R_V_norm_story(i) = norm(R_V);
+    
+        H_s1_norm_story(i) = norm(H_s1, "fro");
+        H_s2_norm_story(i) = norm(H_s2 , "fro");
+    
+        A1_norm_story(i) = norm(A_s1, "fro");
+        A2_norm_story(i) = norm(A_s2, "fro");
+    end
+   
+    %prev_A_s1 = A_s1;
+    prev_A = A_s2;
+
+    %prev_H_s1 = H_s1;
+    prev_H = H_s2;
 end
 
 %% Call the plotting functions.
-if verbose
-    Plotter([residual_step_1 residual_step_2], [convergence_u_story convergence_v_story], [u_norm_story v_norm_story ], [A_norm_story], norm(optA, "fro"))
+if verbose == 1  
+    Plotter([residual_s1_story residual_s2_story residual_H_s1_story residual_H_s2_story], ...
+        [convergence_u_story convergence_v_story], ...
+        [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story], norm(opt_A, "fro"),...
+        [ H_s1_norm_story H_s2_norm_story], [eps_stop_epoch, xi_stop_epoch])
+
+    %disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
 end
 
-%% Return last values
-last_cr_v = convergence_v_story(l);
-last_rs_v = residual_step_2(l);
+disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
 
 %% Adjust return values in case of bias
 if  nargin > 6 && bias == 2
@@ -235,13 +278,5 @@ if  nargin > 6 && bias == 2
 end
 
 if nargin > 6
-    
     U = V_enc;
 end
-
-%optimalError = optimalK(A, k)
-%residual_step_2(50)
-
-%norm(A*A' - U*U', "fro")
-
-%norm(A'*A - V*V', "fro")

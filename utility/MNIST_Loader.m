@@ -1,11 +1,11 @@
-function [training, test] = MNIST_Loader(digit) 
+function [training, test] = MNIST_Loader(digits) 
     %Import dataset from a static resource file
     data = load('resources\datasets\mnist.mat');   
     %Check if filter per digit was specified 
     if nargin > 0
         %Compute a mask corresponding to the digit indexes
-        tr_indexes = (data.training.labels == digit);
-        ts_indexes = (data.test.labels == digit);
+        tr_indexes = (ismember(data.training.labels, digits));
+        ts_indexes = (ismember(data.test.labels, digits));
         %Apply the mask to images and labels for both test and training set.
         training.images = reshape(data.training.images(:,:,tr_indexes), 28*28,[]);
         training.labels = data.training.labels(tr_indexes);

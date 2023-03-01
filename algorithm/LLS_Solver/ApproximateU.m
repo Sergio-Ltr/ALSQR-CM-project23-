@@ -32,47 +32,34 @@
 %
 %% ------------------------------------------------------------------------
 
-function [U, err, V_enc] = ApproximateU (A, V, lambda, bias)
+function [U, A_s, V_enc, Q, R] = ApproximateU (A, V, lambda, bias)
 
 opt.UT = true;
 [n, k] = size (V);   % V size = n x k (now is not transpose)
-[m, ~]  = size (A); % A size = m x n 
+[m, ~] = size(A); 
 
-V_enc = ones(n+1, k);
-
-if nargin > 4 && bias == 1
+if nargin > 3 && bias == 1
     A = [ones(m,1), A];
-    % In such case V_enc is given by 
-    % [Q,R] = qr(V_biased)
-    % V_enc = Q * inv(R')
+    n = n - 1;
 end
+
 
 if lambda ~= 0  
     V = [V; lambda * eye(k)]; % reg. V size= (n+k)x k 
     A = [A, zeros(m,k)];  % reg. V size= m x (n+k)
 end
 
-%[Q, R] = ThinQRfactorization(V);
-[Q, R] =qr(V, 0);
-
-if nargin > 4 && bias == 1
-    V_enc = Q * inv(R)';
-end
-
-U = zeros(m,k);
-for i = 1:m
-    a = A(i, :);
-    [x, ~] = linsolve(R, Q', opt);
-    U(i,:) = a*x';
-end
-
-%% Alternative computation for U 
-%U = A*Q*inv(R)';
+[Q, R] = ThinQRfactorization(V);
+%[Q, R] =qr(V, 0);
 
 
-% to do: use q2 when we have thin QR
-if nargin > 3 && bias == 1
-    err = 0;
-else
-   err = norm(A-U*V', "fro");
-end
+[V_enc, ~] = linsolve(R, Q', opt);
+V_enc = V_enc';
+
+% (m x n) * (n x k) matrix multiplication
+U = A* V_enc;
+
+%% Compute stepa-wise approximation
+A_s = U*V(1:n,:)';
+
+
