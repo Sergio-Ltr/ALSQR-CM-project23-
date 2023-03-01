@@ -167,24 +167,24 @@ for i = 1:l
     
     %% Chek wether if it's time to stop
     if i - 1 == eps_stop_epoch        
-        %if verbose == 0
-            %break;
-        %else
+        if verbose == 0
+            break;
+        else
             disp(["eps-stop", eps_stop_epoch])
             disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
-        %end
+        end
     end
 
     if i - 1 == xi_stop_epoch
         disp(["xi-stop", xi_stop_epoch])
         disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
 
-        %if verbose == 0
-            %break;
-        %else
+        if verbose == 0
+            break;
+        else
             disp(["xi-stop", xi_stop_epoch])
             disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
-        %end
+        end
     end
 
     %% Solve subproblem (1) and (2). 
@@ -265,10 +265,10 @@ if verbose == 1
         [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story], norm(opt_A, "fro"),...
         [ H_s1_norm_story H_s2_norm_story], [eps_stop_epoch, xi_stop_epoch])
 
-    %disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
+    disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
 end
 
-disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
+%disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
 
 %% Adjust return values in case of bias
 if  nargin > 6 && bias == 2

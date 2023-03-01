@@ -18,7 +18,7 @@ function[] = EarlyStopExperiment(r, criterias, sizes )
             xi = crit(3);
 
             disp(["Criteria: l=", l, " - eps=",eps," - xi=",xi, "- REPETITION: ", i])
-            Solver(A, k, [0, 0], [l, eps, xi], V_0, 0);
+            Solver(A, k, [0, 0], [l, eps, xi], V_0, 1);
         end
     end
 
