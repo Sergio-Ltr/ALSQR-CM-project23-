@@ -1,5 +1,5 @@
 function TSNE(k, lambda_u, lambda_v, noise, epochs)
-
+    rng default % for reproducibility
     [tr, ts] = MNIST_Loader([0,1,5]);
 
      A_tr = tr.images;
@@ -11,9 +11,8 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
     end
 
     A_ts = A_ts';
-
     %"AE Embeddings"
-    rng default % for reproducibility
+    
     AE = Linear_AE(k, A_tr, tr.images, epochs);
     w_enc = zeros(785,k);
 
@@ -37,7 +36,6 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
         U_als = A_ts*v_enc(1:size(A,2),:);
     end
 
-    rng default % for reproducibility
     ALS_ne = tsne(U_als);
     subplot(2,2,2)
     gscatter(ALS_ne(:,1), ALS_ne(:,2), ts.labels')
@@ -52,7 +50,6 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
         U_als = [ones(size(A_ts,1),1),A_ts]*v_enc(1:size(A,2),:);
     end
 
-    rng default % for reproducibility
     ALS_ne = tsne(U_als);
     subplot(2,2,3)
     gscatter(ALS_ne(:,1),ALS_ne(:,2), ts.labels')
@@ -67,7 +64,6 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
         U_als = [ones(size(A_ts,1),1),A_ts]*v_enc(1:size(A,2),:);
     end
     
-    rng default % for reproducibility
     ALS_ne = tsne(U_als);
     subplot(2,2,4)
     gscatter(ALS_ne(:,1),ALS_ne(:,2), ts.labels')

@@ -1,8 +1,13 @@
-function[] = EarlyStopExperiment(r, criterias, sizes ) 
+function[] = EarlyStopExperiments(r, criterias, sizes, lambda ) 
     rng default
     if nargin < 3
-        sizes = [100, 25, 5];
+        sizes = [1000, 30, 10];
     end
+
+    if nargin < 4
+        lambda = 0.2;
+    end
+
 
     m = sizes(1);
     n = sizes(2);
@@ -18,7 +23,7 @@ function[] = EarlyStopExperiment(r, criterias, sizes )
             xi = crit(3);
 
             disp(["Criteria: l=", l, " - eps=",eps," - xi=",xi, "- REPETITION: ", i])
-            Solver(A, k, [0, 0], [l, eps, xi], V_0, 1);
+            Solver(A, k, [lambda, lambda], [l, eps, xi], V_0, 1);
         end
     end
 
