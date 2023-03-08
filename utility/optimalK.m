@@ -31,7 +31,7 @@ function [error, M] = optimalK (A, k)
 % compute SVD
 [U, S, V] = svd(A);
 
-% obtain Truncated SVD
+%obtain Truncated SVD
 U = U(:, 1:k);
 S = S(1:k,1:k);
 V = V(:, 1:k);

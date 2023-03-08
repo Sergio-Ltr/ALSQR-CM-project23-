@@ -1,3 +1,27 @@
+%% TSNE
+% This function aims to compare the hidden representation resulting from
+% different AE training like back-propagation, unbiased ALS-QR, Fully biased ALS-QR
+% and Greedy Biased ALS-QR. 
+%% Syntax
+% TSNE(k, lambda_u, lambda_v, noise, epochs)
+%
+%% Description
+% t-SNE (tsne) is an algorithm for dimensionality reduction that is
+% well-suited to visualizing high-dimensional data, we exploits tsne
+% algorithm in order to visualize difference between the hidden 
+% representation learned in the hidden layer (i.e. V matrix aka V encoded 
+% matrix ) throughtout severals training algorithm: back-propagation, unbiased ALS-QR, 
+% Fully biased ALS-QR and Greedy Biased ALS-QR. 
+%
+%% Parameters 
+% -  k: rank for the low rank approximation problem 
+% - lambda_u : thikonov paramter for U matrix
+% - lambda_v : thikonov paramter for V matrix
+% - noise : white gaussian noise to be added to dataset
+% - epochs : max number of iteration to be performed
+%% Examples
+% TSNE(10, 0.2, 0.2, 0, 1000)
+%% ------------------------------------------------------------------------
 function TSNE(k, lambda_u, lambda_v, noise, epochs)
     rng default % for reproducibility
     [tr, ts] = MNIST_Loader([0,1,5]);

@@ -1,3 +1,28 @@
+%% ExecuteVExperiment 
+% This function is defined for performing experiments with respect to
+% different V properties.
+%% Syntax
+% ExecuteVExperiment(values)
+%
+%% Description
+% Given all the possible parameter values  this function compute all possible
+% combinations of them and solve the problem with respect to each
+% combinations.  All the results obtained with each combinations are saved
+% in a final 2 csv document : 
+% - {...}_experiments_Properties.csv : contains info about performed combination and the corresponding paramter values
+%    (id, m_size, n_size, k_rank, density, lambda_u, lambda_v)
+% - {...}_experiments_Results.csv : contains resulting info about performed
+% experiments and the corresponding 
+%    (id, mean_cr, std_cr, mean_rs, std_rs, last_epoch_mean, last_epoch_std, 
+%     tot_time_mean,tot_time_std, epoch_time_mean,epoch_time_std, precision_mean, precision_std, rel_precision_mean,  rel_precision_std
+%     normVinit_mean, normVinit_std, normVend_mean, normVend_std)
+%
+%% Parameters 
+%  values : map.container previuosly defined in V_Experiments.m
+%% Examples
+%
+% [] = ExecuteVExperiment(values)
+%% ------------------------------------------------------------------------
 function [] = ExecuteVExperiment(values)
 
 % declaring experimental type (es. "orth")
