@@ -1,11 +1,11 @@
 function[] = EarlyStopExperiments(r, criterias, sizes, lambda ) 
     rng default
     if nargin < 3
-        sizes = [1000, 30, 10];
+        sizes = [1000, 200, 50];
     end
 
     if nargin < 4
-        lambda = 0.2;
+        lambda = 0;
     end
 
 

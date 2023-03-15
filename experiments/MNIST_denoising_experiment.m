@@ -18,7 +18,9 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
     A_tr = tr.images';
     A_ts = ts.images';
 
-    rng default
+    rng('default')
+    V_0 = Initialize_V(784,k);
+
     if nargin > 3 && noise ~= 0
         A_tr = awgn(A_tr,noise,'measured');
         A_ts = awgn(A_ts,noise,'measured');
@@ -30,10 +32,12 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
         AE = Linear_AE(k, A_tr', tr.images, epochs);
         A_rec= AE(A_ts');
 
-        disp([digit, ") AE Error:", norm(ts.images - A_rec)/size(A_rec,2), "."]) 
+        disp([epochs, ") AE Error:", norm(ts.images - A_rec)/size(A_rec,2), "."]) 
         subplot(d,4,1+4*i), imshow(reshape(A_rec(:, 18),[28,28])*255);
 
-        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], Initialize_V(784, k), 0, 1);
+
+        %Fully Biased Error
+        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 1);
         
         %Encoder Forward propagation
         if lambda_u == 0
@@ -45,11 +49,11 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
         %Decoder Forward propagation 
         A_rec = [ones(size(U,1),1),U]*v_dec';
 
-        disp([digit, ") Fully biased ALS Error:", norm(ts.images' - A_rec)/size(A_rec,2), "."]) 
+        disp([epochs, ") Fully biased ALS Error:", norm(ts.images' - A_rec)/size(A_rec,2), "."]) 
         subplot(d,4,2+4*i), imshow(reshape(A_rec(18,:),[28,28])*255);
 
         %Greedy Biased ALS
-        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], Initialize_V(784, k), 0, 2);
+        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 2);
         %Encoder Forward propagation 
         if lambda_u == 0
             U = [ones(size(A_ts,1),1),A_ts]*v_enc;
@@ -59,12 +63,12 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
         %Decoder Forward propagation 
         A_rec = [ones(size(U,1),1),U]*v_dec';
 
-        disp([digit, ") Gready Biased ALS Error:", norm(ts.images' - A_rec)/size(A_rec,2), "."]) 
+        disp([epochs, ") Gready Biased ALS Error:", norm(ts.images' - A_rec)/size(A_rec,2), "."]) 
         subplot(d,4,3+4*i), imshow(reshape(A_rec(18,:),[28,28])*255);
 
 
         %Unbiased ALS
-        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], Initialize_V(784, k), 0, 0);
+        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 0);
         %Encoder Forward propagation 
         if lambda_u == 0
             U = A_ts*v_enc;
@@ -74,7 +78,7 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
         %Decoder Forward propagation 
         A_rec = U*v_dec';
        
-       disp([digit, ") Unbiased ALS Error:", norm(ts.images' - A_rec)/size(A_rec,2), "."])
+       disp([epochs, ") Unbiased ALS Error:", norm(ts.images' - A_rec)/size(A_rec,2), "."])
        subplot(d,4,4+4*i), imshow(reshape(A_rec(18,:),[28,28])*255);
        
        i = i+1;
