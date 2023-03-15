@@ -1,3 +1,27 @@
+%% EarlyStopExperiments
+% Function to study error achived by ALS-QR algorithm using different early
+% stopping criteria and threshold.
+%% Syntax
+%  EarlyStopExperiments(r, criterias, sizes, lambda ) 
+%
+%% Description
+% Function for carry out early stop experiments, that given specific early
+% stops paramter solve the approximation problem wtr to a specific case 
+% study with (m,n,k) = (1000,30,10). The experiments results show the
+% number of epochs required before ES take action and the number and the
+% error achived.
+% you can speicify your own case study using appropriate parameter.
+%% Parameters 
+% - r : ripetitions, number of times you want to repeat the experiments to
+% obtain more accurate results indicators
+% - criterias: [max number of epochs, epsilon, xi]
+% - sizes : (optional) [m,n,k]
+% - lambda : optional, thikonov regularization parameter values 
+%% Examples
+% - EarlyStopExperiments(5, [1000, 10e-1,0]
+% - EarlyStopExperiments(5, [1000, 10e-1,0], [1000,30,10]) 
+% - EarlyStopExperiments(5, [1000, 10e-1,0], [1000,30,10], 0.2) 
+%% ------------------------------------------------------------------------
 function[] = EarlyStopExperiments(r, criterias, sizes, lambda ) 
     rng default
     if nargin < 3

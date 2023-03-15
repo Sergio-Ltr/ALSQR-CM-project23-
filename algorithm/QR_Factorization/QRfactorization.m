@@ -1,3 +1,21 @@
+%% ThinQRfactorization 
+% Compute QR factorization of a general matrix A
+%
+%% Syntax
+%[Q,R] = QRfactorization (A)
+%
+%% Description
+% This implementation refers to QR implementation proposed during course
+% lecture.
+%
+%% Parameters 
+% A : m x n matrix to be factorized 
+%
+%% Examples
+% A = randn(30, 10) 
+%[Q,R] = QRfactorization (A)
+%
+%% ------------------------------------------------------------------------
 function [Q,R] = QRfactorization (A)
 
 [m, n] = size(A);   % dimension of matrix A

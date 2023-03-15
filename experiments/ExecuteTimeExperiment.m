@@ -1,3 +1,36 @@
+%% ExecuteTimeExperiment 
+% This function is defined for performing time efficiency experiments with
+% respect to:
+% 1) Our ThinQR vs. lecture course FullQR vs. matlab ThinQR
+% 2) Our ALS-QR vs. matlab Truncated SVD
+%% Syntax
+% ExecuteTimeExperiment(values)
+%
+%% Description
+% Given all the possible parameter values  this function compute all possible
+% combinations of them and solve the problem with respect to each
+% combinations.  All the results obtained with each combinations are saved
+% in a final 2 csv document : 
+% - {...}_experiments_Properties.csv : contains info about performed combination and the corresponding paramter values
+%    - if starting problem is 1) then the file will contain
+%    (id, m_size, n_size)
+%    - if starting problem is 2) then the file will contain
+%    (id, m_size, n_size, k_rank, density, lambda_u, lambda_v)
+% - {...}_experiments_Results.csv : contains resulting info related to time
+%    elapsed in performing each combinations, solving each time the whole
+%    problem 
+%    - if starting problem is 1) then the file will contain
+%    (id, mean_ThinQR_time_elapsed, std_ThinQR_time_elapsed, mean_QR_time_elapsed, 
+%     std_QR_time_elapsed, mean_mQR_time_elapsed,std_mQR_time_elapsed ) 
+%    - if starting problem is 2) then the file will contain
+%    (id, mean_solver_time_elapsed, std_solver_time_elapsed, mean_svd_time_elapsed, std_svd_time_elapsed)
+%
+%% Parameters 
+%  values : map.container previuosly defined in Time_Experiments.m
+%% Examples
+%
+% [] = ExecuteTimeExperiment(values)
+%% ------------------------------------------------------------------------
 function [] = ExecuteTimeExperiment(values)
 
 type = values('type');
