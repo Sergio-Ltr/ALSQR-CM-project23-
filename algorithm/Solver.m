@@ -10,6 +10,7 @@
 %  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi])
 %  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi], V_0)
 %  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi], V_0, verbosity)
+%  [
 %   
 %% Description
 %
@@ -126,7 +127,7 @@ if nargin > 6 && bias == 1
     V_biased = randn(n+1, k);
 end
 
-[opt_err, opt_A] = optimalK(A, k);
+%[opt_err, opt_A] = optimalK(A, k);
 
 if verbose == 1
     [opt_err, opt_A] = optimalK(A, k);
@@ -161,6 +162,7 @@ end
 R_U = randn(k,k);
 prev_A = Inf;
 prev_H= Inf;
+prev_V_penalty = lambda_v*norm(V, "fro");
 
 %% Alternate optimization loop.
 for i = 1:l
@@ -176,9 +178,6 @@ for i = 1:l
     end
 
     if i - 1 == xi_stop_epoch
-        disp(["xi-stop", xi_stop_epoch])
-        disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
-
         if verbose == 0
             break;
         else
@@ -191,11 +190,14 @@ for i = 1:l
     % Unbiased Training
     if nargin <= 6 || ( nargin > 6 && bias ~= 1) 
         % Subproblem (1)
-        [U,A_s1, V_enc, ~, R_V] = ApproximateU(A, V, lambda_u,0);
+        [U, A_s1, V_enc, ~, R_V] = ApproximateU(A, V, lambda_u,0);
         H_s1 = R_U*R_V';
+        V_penalty = lambda_v*norm(V, "fro");
+
         % Subproblem (2)
         [V,A_s2, ~, R_U] = ApproximateV(A, U, lambda_v);
         H_s2 = R_U*R_V';
+        U_penalty = lambda_u*norm(U,"fro"); 
     end
 
     %Biased Training
@@ -234,9 +236,12 @@ for i = 1:l
     
         residual_H_s1_story(i) = r_H_s1;
         residual_H_s2_story(i) = r_H_s2;
-    
-        convergence_u_story(i) = (norm(A_s1 - opt_A, "fro") - opt_err) /opt_err;
-        convergence_v_story(i) = (norm(A_s2 - opt_A, "fro") - opt_err) /opt_err;
+
+        
+        
+
+        convergence_u_story(i) = norm(A_s1 - A, "fro") + U_penalty + prev_V_penalty;
+        convergence_v_story(i) = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
     
         u_norm_story(i) = norm(U, "fro");
         v_norm_story(i) = norm(V, "fro");
@@ -256,6 +261,8 @@ for i = 1:l
 
     %prev_H_s1 = H_s1;
     prev_H = H_s2;
+
+    prev_V_penalty = V_penalty;
 end
 
 %% Call the plotting functions.

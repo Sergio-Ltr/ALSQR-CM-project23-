@@ -24,7 +24,7 @@
 %   convergence rate computed after each update. 
 %
 % norms_history: contains four l dimensional vectors, the first two are ones 
-%   containing values of the Frobenious norm of the U and V matrix respctively, 
+%   containing values of the Froious norm of the U and V matrix respctively, 
 %   computed at each step after the update, while the last two contain 
 %   the value of the frobenious norm of U_s*V_S'.
 %   
@@ -55,22 +55,35 @@ end
 %First plot: Approximation Residual normalized by ||A||
 if nargin > 0
      
-    %residual_history = log1p(residual_history);
+    residual_history = log1p(residual_history);
 
     nexttile;
     plot(residual_history(:,1));
     hold on
-    plot(residual_history(:,3), "m");
-    scatter(eps_stop, residual_history(eps_stop,1), "o");
-    scatter(xi_stop, residual_history(eps_stop,3), "x");
+    %plot(residual_history(:,3), "m");
+
+    if eps_stop ~= l
+        scatter(eps_stop, residual_history(eps_stop,1), "o");
+    end
+
+    if xi_stop ~= l
+        scatter(xi_stop, residual_history(eps_stop,3), "x");
+    end
+
     title('residual step 1');
 
     nexttile;
     plot(residual_history(:, 2));
     hold on 
-    plot(residual_history(:,4), "m");
-    scatter(eps_stop, residual_history(eps_stop,2), "o");
-    scatter(xi_stop, residual_history(eps_stop,4), "x");
+    %plot(residual_history(:,4), "m");
+
+    if eps_stop ~= l
+        scatter(eps_stop, residual_history(eps_stop,2), "o");
+    end
+
+    if xi_stop ~= l
+        scatter(xi_stop, residual_history(eps_stop,4), "x");
+    end
     title('residual step 2');
 
     a_residual_history = [residual_history(:,1) residual_history(:,2)]';
@@ -79,9 +92,11 @@ if nargin > 0
     nexttile;
     plot(a_residual_history(:));
     hold on 
-    plot(h_residual_history(:), "m");
+    %plot(h_residual_history(:), "m");
     scatter(eps_stop*2,a_residual_history(2,eps_stop), "o");
-    scatter(xi_stop*2,h_residual_history(2,xi_stop), "x");
+    if xi_stop ~= l
+        scatter(xi_stop*2,h_residual_history(2,xi_stop), "x");
+    end
     title('full residual');
 end 
 
@@ -89,20 +104,33 @@ end
 %Second plot: Relative gap rate through iterations
 if nargin > 1
    
-    convergence_history = log1p(convergence_history);
+    %convergence_history = log(convergence_history);
     
     nexttile;
     plot(convergence_history(:, 1));
     hold on
-    scatter(eps_stop, convergence_history(eps_stop,1), "o");
-    scatter(xi_stop, convergence_history(xi_stop,1), "x");
+
+    if eps_stop~=1
+        scatter(eps_stop, convergence_history(eps_stop,1), "o");
+    end
+    
+    if xi_stop ~= l
+        scatter(xi_stop, convergence_history(xi_stop,1), "x");
+    end
     title('convergence U');
 
     nexttile;
     plot(convergence_history(:, 2));
     hold on
-    scatter(eps_stop, convergence_history(eps_stop,2), "o");
-    scatter(xi_stop, convergence_history(xi_stop,2), "x");
+
+    if eps_stop ~= l
+        scatter(eps_stop, convergence_history(eps_stop,2), "o");
+    end
+
+    if xi_stop ~= l
+        scatter(xi_stop, convergence_history(xi_stop,2), "x");
+    end
+
     title('convergence V');
     convergence_history = convergence_history';
 
@@ -110,8 +138,12 @@ if nargin > 1
     %residual at step 1
     plot(convergence_history(:));
     hold on
-    scatter(eps_stop*2,convergence_history(2,eps_stop), "o");
-    scatter(xi_stop*2,convergence_history(2,xi_stop), "x");
+    if eps_stop ~= l
+        scatter(eps_stop*2,convergence_history(2,eps_stop), "o");
+    end
+    if xi_stop ~= l
+        scatter(xi_stop*2,convergence_history(2,xi_stop), "x");
+    end
     title('full convergence');
 end 
 
@@ -123,27 +155,35 @@ if nargin > 2
 
     nexttile;
     plot(norms_history(:, 1));
-    hold on
-    plot(norms_history(:, 3), "m");
+    %hold on
+    %plot(norms_history(:, 3), "m");
     hold on
     scatter(eps_stop, norms_history(eps_stop,1), "o");
-    scatter(xi_stop, norms_history(xi_stop,3), "x");
+    if xi_stop ~= l
+        scatter(xi_stop, norms_history(xi_stop,3), "x");
+    end
     title('U-norm');
 
     nexttile;
     plot(norms_history(:, 2));
+    %hold on 
+    %plot(norms_history(:, 4), "m");
     hold on 
-    plot(norms_history(:, 4), "m");
-    hold on 
-    scatter(eps_stop, norms_history(eps_stop,2), "o");
-    scatter(xi_stop, norms_history(xi_stop,4), "x");
+    if eps_stop ~= l
+        scatter(eps_stop, norms_history(eps_stop,2), "o");
+    end
+    if xi_stop ~= l
+        scatter(xi_stop, norms_history(xi_stop,4), "x");
+    end
     title('V-norm');
 
     nexttile;
     A_history = [norms_history(:, 5), norms_history(:, 6)]';
     plot(A_history(:))
     hold on
-    scatter(eps_stop*2, A_history(2, eps_stop), "o")
+    if eps_stop ~= l
+        scatter(eps_stop*2, A_history(2, eps_stop), "o")
+    end
     hold on
    
 
@@ -157,9 +197,12 @@ if nargin > 2
 
     if nargin > 4
         H_norm = H_norm';
-        plot(H_norm(:), "m");
+        %plot(H_norm(:), "m");
         hold on
-        scatter(xi_stop*2, H_norm(2,xi_stop), "x");
+
+        if xi_stop ~= l
+            scatter(xi_stop*2, H_norm(2,xi_stop), "x");
+        end
     end
 
 
