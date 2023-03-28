@@ -28,7 +28,8 @@
 %% ---------------------------------------------------------------------------------------------------
 function [error, M] = optimalK (A, k, lambda_u, lambda_v)
 
-if nargin < 3
+
+if nargin < 3 || ( lambda_u == 0 && (nargin == 3 || lambda_v == 0))
     %lambda_u = 0;
     %lambda_v = 0;
 
@@ -49,10 +50,6 @@ if nargin < 3
 else
     % If we ssek the regularized optimal solution, idea is to use a more
     % reliable solver like the matlab "optimproblem" toolbox. 
-
-    if nargin < 4
-        lambda_v = lambda_u;
-    end
 
     reg_prob = optimproblem();
     
