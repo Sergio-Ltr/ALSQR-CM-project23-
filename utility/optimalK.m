@@ -26,19 +26,64 @@
 % error = optimalK(A, k)
 % 
 %% ---------------------------------------------------------------------------------------------------
-function [error, M] = optimalK (A, k)
+function [error, M] = optimalK (A, k, lambda_u, lambda_v)
 
-% compute SVD
-[U, S, V] = svd(A);
+if nargin < 3
+    %lambda_u = 0;
+    %lambda_v = 0;
 
-%obtain Truncated SVD
-U = U(:, 1:k);
-S = S(1:k,1:k);
-V = V(:, 1:k);
+    % compute SVD
+    [U, S, V] = svd(A);
+    
+    %obtain Truncated SVD
+    U = U(:, 1:k);
+    S = S(1:k,1:k);
+    V = V(:, 1:k);
+    
+    % Compute approximation of A 
+    M = U*S*V';
+    
+    % Compute optimal error
+    error = norm(A-M, "fro");
 
-% Compute approximation of A 
-M = U*S*V';
+else
+    % If we ssek the regularized optimal solution, idea is to use a more
+    % reliable solver like the matlab "optimproblem" toolbox. 
 
-% Compute optimal error
-error = norm(A-M, "fro");
+    if nargin < 4
+        lambda_v = lambda_u;
+    end
+
+    reg_prob = optimproblem();
+    
+    m = size(A, 1);
+    n = size(A, 2);
+
+    U = optimvar('U',m, k);
+    V = optimvar('V',n, k);
+
+    reg_prob.Objective = norm(A - U*V') + lambda_u*norm(U) + lambda_v*norm(V);
+    
+    % Provide some initial pointsd
+    X0.V = randn(n,k); 
+    X0.U = randn(m,k);  
+
+    options = optimoptions("fminunc");
+
+    options.MaxIterations = 100000;
+    options.StepTolerance = 1e-12;
+    options.OptimalityTolerance = 1.000e-012; 
+
+    solution = solve(reg_prob, X0, Options=options); 
+
+    U_opt = solution.U; 
+    V_opt = solution.V;
+
+    M = U_opt*V_opt';
+    error = norm(A - M, "fro") + lambda_u*norm(U_opt, "fro") + lambda_v*norm(V_opt, "fro");
+end
+
+
+
+
 
