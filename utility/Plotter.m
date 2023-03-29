@@ -183,7 +183,6 @@ if nargin > 2
         scatter(xi_stop, norms_history(xi_stop,4), "x");
     end
 
-    size(norm_opt_solutions)
     if  nargin > 3 && size(norm_opt_solutions, 2) > 1
         plot( ones(l)*norm_opt_solutions(3), 'g');
         hold on

@@ -46,6 +46,7 @@ if nargin < 3 || ( lambda_u == 0 && (nargin == 3 || lambda_v == 0))
     
     % Compute optimal error
     error = norm(A-M, "fro");
+    factors_norms = [];
 else
     % If we ssek the regularized optimal solution, idea is to use a more
     % reliable solver like the matlab "optimproblem" toolbox. 
