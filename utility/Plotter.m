@@ -39,7 +39,7 @@
 % Plotter(residual_history, convergence_history, norms_history, norm_opt_A)
 %
 %% ---------------------------------------------------------------------------------------------------
-function[] = Plotter(residual_history, convergence_history, norms_history, norm_opt_A, H_norm, stop_points)
+function[] = Plotter(residual_history, convergence_history, norms_history, norm_opt_solutions, H_norm, stop_points)
 tiledlayout(nargin,3);
 
 l = size(norms_history,1);
@@ -162,6 +162,13 @@ if nargin > 2
     if xi_stop ~= l
         scatter(xi_stop, norms_history(xi_stop,3), "x");
     end
+
+
+    if  nargin > 3 && size(norm_opt_solutions, 2) > 1
+        plot( ones(l)*norm_opt_solutions(2), 'g');
+        hold on
+    end
+
     title('U-norm');
 
     nexttile;
@@ -175,6 +182,13 @@ if nargin > 2
     if xi_stop ~= l
         scatter(xi_stop, norms_history(xi_stop,4), "x");
     end
+
+    size(norm_opt_solutions)
+    if  nargin > 3 && size(norm_opt_solutions, 2) > 1
+        plot( ones(l)*norm_opt_solutions(3), 'g');
+        hold on
+    end
+
     title('V-norm');
 
     nexttile;
@@ -191,9 +205,11 @@ if nargin > 2
     % norm of the optimal solution, showing if it is approached.
 
     if nargin > 3
-        plot( ones(l*2)*norm_opt_A, 'g');
+        plot( ones(l*2)*norm_opt_solutions(1), 'g');
         hold on
     end
+
+    
 
     if nargin > 4
         H_norm = H_norm';

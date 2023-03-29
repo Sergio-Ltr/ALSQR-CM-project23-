@@ -130,7 +130,12 @@ end
 %[opt_err, opt_A] = optimalK(A, k);
 
 if verbose == 1
-    [opt_err, opt_A] = optimalK(A, k);
+    [opt_err, opt_A, factors] = optimalK(A, k, lambda_u, lambda_v);
+    if lambda_u ~= 0 && lambda_v ~= 0
+        norm_opt_U = factors(1);
+        norm_opt_V = factors(2);
+    end
+
 
     %% Compute optimal error and A*
    
@@ -267,12 +272,18 @@ end
 
 %% Call the plotting functions.
 if verbose == 1  
+    if lambda_u ~= 0 && lambda_v ~= 0
+        optimal_norms = [ norm(opt_A, "fro"), norm_opt_U, norm_opt_V];
+    else
+        optimal_norms = [norm(opt_A, "fro")];
+    end
+
     Plotter([residual_s1_story residual_s2_story residual_H_s1_story residual_H_s2_story], ...
         [convergence_u_story convergence_v_story], ...
-        [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story], norm(opt_A, "fro"),...
+        [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story], optimal_norms,...
         [ H_s1_norm_story H_s2_norm_story], [eps_stop_epoch, xi_stop_epoch])
 
-    disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
+    disp([ "Resiudal wrt to optimal error", (norm(A - A_s2, "fro") + U_penalty + V_penalty)- opt_err])
 end
 
 %disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])

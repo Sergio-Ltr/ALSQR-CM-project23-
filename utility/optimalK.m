@@ -26,7 +26,7 @@
 % error = optimalK(A, k)
 % 
 %% ---------------------------------------------------------------------------------------------------
-function [error, M] = optimalK (A, k, lambda_u, lambda_v)
+function [error, M, factors_norms] = optimalK (A, k, lambda_u, lambda_v)
 
 
 if nargin < 3 || ( lambda_u == 0 && (nargin == 3 || lambda_v == 0))
@@ -46,7 +46,6 @@ if nargin < 3 || ( lambda_u == 0 && (nargin == 3 || lambda_v == 0))
     
     % Compute optimal error
     error = norm(A-M, "fro");
-
 else
     % If we ssek the regularized optimal solution, idea is to use a more
     % reliable solver like the matlab "optimproblem" toolbox. 
@@ -78,6 +77,8 @@ else
 
     M = U_opt*V_opt';
     error = norm(A - M, "fro") + lambda_u*norm(U_opt, "fro") + lambda_v*norm(V_opt, "fro");
+
+    factors_norms = [norm(solution.U, "fro"), norm(solution.V,"fro")];
 end
 
 
