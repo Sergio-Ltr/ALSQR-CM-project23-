@@ -69,7 +69,7 @@
 %  
 %% ---------------------------------------------------------------------------------------------------
 
-function [U, V, l] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias)
+function [U, V, l] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias, filename)
 
 m = size(A,1);
 n = size(A,2);
@@ -242,9 +242,6 @@ for i = 1:l
         residual_H_s1_story(i) = r_H_s1;
         residual_H_s2_story(i) = r_H_s2;
 
-        
-        
-
         convergence_u_story(i) = norm(A_s1 - A, "fro") + U_penalty + prev_V_penalty;
         convergence_v_story(i) = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
     
@@ -284,9 +281,11 @@ if verbose == 1
         [ H_s1_norm_story H_s2_norm_story], [eps_stop_epoch, xi_stop_epoch])
 
     disp([ "Resiudal wrt to optimal error", (norm(A - A_s2, "fro") + U_penalty + V_penalty)- opt_err])
-end
+    
+    dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
+    dlmwrite(filename,[residual_s1_story, residual_s2_story, convergence_u_story, convergence_v_story, u_norm_story, v_norm_story],'delimiter',',','-append');
 
-%disp([ "Resiudal wrt to SVD optimal error", norm(A - A_s2, "fro") - opt_err])
+end
 
 %% Adjust return values in case of bias
 if  nargin > 6 && bias == 2

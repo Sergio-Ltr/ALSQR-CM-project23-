@@ -55,7 +55,7 @@ end
 %First plot: Approximation Residual normalized by ||A||
 if nargin > 0
      
-    residual_history = log1p(residual_history);
+    %residual_history = log1p(residual_history);
 
     nexttile;
     plot(residual_history(:,1));

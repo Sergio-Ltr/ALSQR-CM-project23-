@@ -67,9 +67,9 @@ else
 
     options = optimoptions("fminunc");
 
-    options.MaxIterations = 100000;
-    options.StepTolerance = 1e-12;
-    options.OptimalityTolerance = 1.000e-012; 
+    options.MaxIterations = 1000;
+    options.StepTolerance = 1e-06;
+    options.OptimalityTolerance = 1.000e-06; 
 
     solution = solve(reg_prob, X0, Options=options); 
 
