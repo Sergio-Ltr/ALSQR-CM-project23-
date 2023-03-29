@@ -283,7 +283,7 @@ if verbose == 1
     disp([ "Resiudal wrt to optimal error", (norm(A - A_s2, "fro") + U_penalty + V_penalty)- opt_err])
     
     dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
-    dlmwrite(filename,[residual_s1_story, residual_s2_story, convergence_u_story, convergence_v_story, u_norm_story, v_norm_story],'delimiter',',','-append');
+    dlmwrite(filename,[residual_s1_story, residual_s2_story, convergence_u_story, convergence_v_story, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
 
 end
 
