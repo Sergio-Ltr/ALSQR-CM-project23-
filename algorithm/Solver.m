@@ -69,7 +69,7 @@
 %  
 %% ---------------------------------------------------------------------------------------------------
 
-function [U, V, l] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias, filename)
+function [U, V, l] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias, filename, opt_A, norm_opt_U, norm_opt_V)
 
 m = size(A,1);
 n = size(A,2);
@@ -130,25 +130,21 @@ end
 %[opt_err, opt_A] = optimalK(A, k);
 
 if verbose == 1
-    [opt_err, opt_A, factors] = optimalK(A, k, lambda_u, lambda_v);
-    if lambda_u ~= 0 && lambda_v ~= 0
-        norm_opt_U = factors(1);
-        norm_opt_V = factors(2);
+    %% Compute optimal error and A
+     if nargin < 9
+        [opt_err, opt_A, factors] = optimalK(A, k, lambda_u, lambda_v);
+        if lambda_u ~= 0 && lambda_v ~= 0
+            norm_opt_U = factors(1);
+            norm_opt_V = factors(2);
+        end
     end
 
-
-    %% Compute optimal error and A*
-   
-
     %% Create arrays to save data for plots. 
-    residual_s1_story = zeros(l,1);
-    residual_s2_story = zeros(l,1);
+    loss_u = zeros(l,1);
+    loss_v = zeros(l,1);
     
-    residual_H_s1_story = zeros(l,1);
-    residual_H_s2_story = zeros(l,1);
-    
-    convergence_u_story = zeros(l,1);
-    convergence_v_story = zeros(l,1);
+    gap_u = zeros(l,1);
+    gap_v = zeros(l,1);
     
     u_norm_story = zeros(l,1);
     v_norm_story = zeros(l,1);
@@ -178,7 +174,7 @@ for i = 1:l
             break;
         else
             disp(["eps-stop", eps_stop_epoch])
-            disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
+            disp(["gap:", norm(opt_A - A_s2, "fro")])
         end
     end
 
@@ -187,7 +183,7 @@ for i = 1:l
             break;
         else
             disp(["xi-stop", xi_stop_epoch])
-            disp(["gap:", norm(A - A_s2, "fro") - opt_err ])
+            disp(["gap:", norm(opt_A - A_s2, "fro")])
         end
     end
 
@@ -230,21 +226,15 @@ for i = 1:l
 
     %% Save results for the plots.
     if verbose == 1
-        r_s1 = norm(prev_A - A_s1, "fro");
-        r_s2 = norm(A_s1 - A_s2, "fro");
-    
-        residual_s1_story(i) = r_s1;
-        residual_s2_story(i) = r_s2;
-    
-        r_H_s1 = norm(prev_H - H_s1, "fro");
-        r_H_s2 = norm(H_s1 - H_s2 , "fro");
-    
-        residual_H_s1_story(i) = r_H_s1;
-        residual_H_s2_story(i) = r_H_s2;
+        %% Stepwise Loss
+        loss_u(i) = norm(A_s1 - A, "fro") + U_penalty + prev_V_penalty;
+        loss_v(i) = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
 
-        convergence_u_story(i) = norm(A_s1 - A, "fro") + U_penalty + prev_V_penalty;
-        convergence_v_story(i) = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
-    
+        %% Stepwise Gap
+        gap_u(i) = norm(opt_A - A_s1);
+        gap_v(i) = norm(opt_A - A_s2);
+
+        %% Norms of factors and approximations
         u_norm_story(i) = norm(U, "fro");
         v_norm_story(i) = norm(V, "fro");
     
@@ -274,16 +264,17 @@ if verbose == 1
     else
         optimal_norms = [norm(opt_A, "fro")];
     end
+    
+    norms_history = [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story H_s1_norm_story H_s2_norm_story];
 
-    Plotter([residual_s1_story residual_s2_story residual_H_s1_story residual_H_s2_story], ...
-        [convergence_u_story convergence_v_story], ...
-        [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story], optimal_norms,...
-        [ H_s1_norm_story H_s2_norm_story], [eps_stop_epoch, xi_stop_epoch])
+    Plotter([loss_u loss_v], [gap_u gap_v], norms_history, optimal_norms, [eps_stop_epoch, xi_stop_epoch]);
 
-    disp([ "Resiudal wrt to optimal error", (norm(A - A_s2, "fro") + U_penalty + V_penalty)- opt_err])
+    disp([ "Loss", norm(A - A_s2, "fro") + U_penalty + V_penalty]);
+    disp([ "Gap", norm(opt_A - A_s2, "fro")]);
+    disp([ "Relative Gap", norm(opt_A - A_s2, "fro")/norm(opt_A, "fro")]);
     
     dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
-    dlmwrite(filename,[residual_s1_story, residual_s2_story, convergence_u_story, convergence_v_story, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
+    dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
 
 end
 

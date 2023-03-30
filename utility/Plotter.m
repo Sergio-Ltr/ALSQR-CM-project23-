@@ -4,9 +4,9 @@
 %
 %% Syntax
 %
-% Plotter(residual_history)
-% Plotter(residual_history, convergence_history)
-% Plotter(residual_history, convergence_history, norms_history)
+% Plotter(loss)
+% Plotter(loss, gap)
+% Plotter(loss, gap, norms_history)
 %
 %% Description
 %
@@ -39,7 +39,7 @@
 % Plotter(residual_history, convergence_history, norms_history, norm_opt_A)
 %
 %% ---------------------------------------------------------------------------------------------------
-function[] = Plotter(residual_history, convergence_history, norms_history, norm_opt_solutions, H_norm, stop_points)
+function[] = Plotter(loss, gap, norms_history, norm_opt_solutions, stop_points)
 tiledlayout(nargin,3);
 
 l = size(norms_history,1);
@@ -52,52 +52,47 @@ else
     xi_stop = l;
 end
 
-%First plot: Approximation Residual normalized by ||A||
+%First plot: Approximation of losses
 if nargin > 0
      
-    %residual_history = log1p(residual_history);
-
     nexttile;
-    plot(residual_history(:,1));
+    plot(loss(:,1));
     hold on
-    %plot(residual_history(:,3), "m");
 
     if eps_stop ~= l
-        scatter(eps_stop, residual_history(eps_stop,1), "o");
+        scatter(eps_stop, loss(eps_stop,1), "o");
     end
 
     if xi_stop ~= l
-        scatter(xi_stop, residual_history(eps_stop,3), "x");
+        scatter(xi_stop, loss(eps_stop,3), "x");
     end
 
-    title('residual step 1');
+    title('Loss step 1');
 
     nexttile;
-    plot(residual_history(:, 2));
+    plot(loss(:, 2));
     hold on 
-    %plot(residual_history(:,4), "m");
 
     if eps_stop ~= l
-        scatter(eps_stop, residual_history(eps_stop,2), "o");
+        scatter(eps_stop, loss(eps_stop,2), "o");
     end
 
     if xi_stop ~= l
-        scatter(xi_stop, residual_history(eps_stop,4), "x");
+        scatter(xi_stop, loss(eps_stop,4), "x");
     end
-    title('residual step 2');
+    title('Loss step 2');
 
-    a_residual_history = [residual_history(:,1) residual_history(:,2)]';
-    h_residual_history = [residual_history(:,3) residual_history(:,4)]';
-   
+    loss_history = [loss(:,1) loss(:,2)]';   
     nexttile;
-    plot(a_residual_history(:));
+
+    plot(loss_history(:));
     hold on 
-    %plot(h_residual_history(:), "m");
-    scatter(eps_stop*2,a_residual_history(2,eps_stop), "o");
+
+    scatter(eps_stop*2,loss_history(2,eps_stop), "o");
     if xi_stop ~= l
-        scatter(xi_stop*2,h_residual_history(2,xi_stop), "x");
+        scatter(xi_stop*2,loss_history(2,xi_stop), "x");
     end
-    title('full residual');
+    title('Full Loss');
 end 
 
 
@@ -107,44 +102,44 @@ if nargin > 1
     %convergence_history = log(convergence_history);
     
     nexttile;
-    plot(convergence_history(:, 1));
+    plot(gap(:, 1));
     hold on
 
     if eps_stop~=1
-        scatter(eps_stop, convergence_history(eps_stop,1), "o");
+        scatter(eps_stop, gap(eps_stop,1), "o");
     end
     
     if xi_stop ~= l
-        scatter(xi_stop, convergence_history(xi_stop,1), "x");
+        scatter(xi_stop, gap(xi_stop,1), "x");
     end
-    title('convergence U');
+    title('Gap at step 1');
 
     nexttile;
-    plot(convergence_history(:, 2));
+    plot(gap(:, 2));
     hold on
 
     if eps_stop ~= l
-        scatter(eps_stop, convergence_history(eps_stop,2), "o");
+        scatter(eps_stop, gap(eps_stop,2), "o");
     end
 
     if xi_stop ~= l
-        scatter(xi_stop, convergence_history(xi_stop,2), "x");
+        scatter(xi_stop, gap(xi_stop,2), "x");
     end
 
-    title('convergence V');
-    convergence_history = convergence_history';
+    title('Gap at step 2 V');
+    gap_history = gap';
 
     nexttile;
     %residual at step 1
-    plot(convergence_history(:));
+    plot(gap_history(:));
     hold on
     if eps_stop ~= l
-        scatter(eps_stop*2,convergence_history(2,eps_stop), "o");
+        scatter(eps_stop*2,gap_history(2,eps_stop), "o");
     end
     if xi_stop ~= l
-        scatter(xi_stop*2,convergence_history(2,xi_stop), "x");
+        scatter(xi_stop*2,gap_history(2,xi_stop), "x");
     end
-    title('full convergence');
+    title('Full Gap');
 end 
 
 
@@ -192,10 +187,21 @@ if nargin > 2
 
     nexttile;
     A_history = [norms_history(:, 5), norms_history(:, 6)]';
+    H_norm = [norms_history(:, 7), norms_history(:, 8)]'; 
+
     plot(A_history(:))
     hold on
+
+    plot(H_norm(:), "m");
+    hold on
+
     if eps_stop ~= l
         scatter(eps_stop*2, A_history(2, eps_stop), "o")
+    end
+    hold on
+
+    if xi_stop ~= l
+        scatter(xi_stop*2, H_norm(2,xi_stop), "x");
     end
     hold on
    
@@ -205,21 +211,7 @@ if nargin > 2
 
     if nargin > 3
         plot( ones(l*2)*norm_opt_solutions(1), 'g');
-        hold on
     end
-
-    
-
-    if nargin > 4
-        H_norm = H_norm';
-        %plot(H_norm(:), "m");
-        hold on
-
-        if xi_stop ~= l
-            scatter(xi_stop*2, H_norm(2,xi_stop), "x");
-        end
-    end
-
 
     title('A norm');
 end

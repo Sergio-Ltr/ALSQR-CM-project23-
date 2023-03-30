@@ -107,7 +107,7 @@ if nargin > 2
         mat = full(sprandn(n, k, d)); % = Vo (starting point) 
     
     elseif  constraint_key == "orth"
-        mat = orth(randn(k,n));% output a matrix of orthogonal columns. 
+        mat = orth(randn(n,k));% output a matrix of orthogonal columns. 
     
     elseif  constraint_key == "low_rank"
         r = k - 1;
@@ -125,7 +125,7 @@ if nargin > 2
             d = param;
         end
         mat = full(sprandn(n, k, d)) ~= 0; % = Vo (starting point) 
-    
+        mat = double(mat);
     elseif constraint_key == "prob"
         mat = rand(n,k);
         mat = mat./sum(mat);
