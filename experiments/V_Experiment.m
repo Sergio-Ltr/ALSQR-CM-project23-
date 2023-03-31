@@ -41,15 +41,12 @@ function [value2test] = V_Experiment (experiment)
 
 value2test = containers.Map;
 
-value2test('m_range') = 150;
-value2test('n_range') = 100;
-value2test('k_min') = [];
-value2test('k_max') = 50;
-value2test('k_stride') = 0;
-value2test('k_limits') = [];
-value2test('d_range') = 0.5;
+value2test('m_range') = [100, 150, 200];
+value2test('n_range') = [50, 100];
+value2test('k_range') = [5, 20, 30];
+value2test('d_range') = 1;
 value2test('reg_parameter')  = [0.5, 0.5];
-value2test('stop_parameter') = [500, 0, 10e-6, 10];
+value2test('stop_parameter') = [500, 1e-6, 1e-12];
 
 if experiment == "dist"
     value2test('type') = experiment;

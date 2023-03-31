@@ -74,10 +74,13 @@ else
     % read possible values for each variable
     m_range = values('m_range');
     n_range = values('n_range');
+    %{
     k_min   = values('k_min');
     k_max   = values('k_max');
     k_stride = values ('k_stride');
     k_limits = values ('k_limits');
+    %}
+    k_range = values('k_range');
     stop = values('stop_parameter');
     reg  = values ('reg_parameter');
     
@@ -87,7 +90,7 @@ else
     
     for m = m_range
         for n = n_range
-            k_range = generateKrange(m,n, cat(2, k_limits, k_min), k_stride, k_max);
+            %k_range = generateKrange(m,n, cat(2, k_limits, k_min), k_stride, k_max);
             for k = k_range
                 for d = d_range
                     % add a single combination  to the list of all possible combinations

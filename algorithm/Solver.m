@@ -69,7 +69,7 @@
 %  
 %% ---------------------------------------------------------------------------------------------------
 
-function [U, V, l] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias, filename, opt_A, norm_opt_U, norm_opt_V)
+function [U, V, final_iteration, final_loss, final_gap] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias, filename, opt_A, norm_opt_U, norm_opt_V)
 
 m = size(A,1);
 n = size(A,2);
@@ -102,6 +102,8 @@ end
 eps_stop_epoch = l;
 xi_stop_epoch = l;
 
+final_iteration = l;
+
 if nargin > 4 
     if size(initial_V, 2) == k 
         % Custom Initial V. 
@@ -132,7 +134,8 @@ end
 if verbose == 1
     %% Compute optimal error and A
      if nargin < 9
-        [opt_err, opt_A, factors] = optimalK(A, k, lambda_u, lambda_v);
+        %% TODO redefine optimalK in order to not return opt_err anymore. 
+        [~, opt_A, factors] = optimalK(A, k, lambda_u, lambda_v);
         if lambda_u ~= 0 && lambda_v ~= 0
             norm_opt_U = factors(1);
             norm_opt_V = factors(2);
@@ -217,11 +220,13 @@ for i = 1:l
     if eps ~= 0 && norm(prev_A - A_s2, "fro") < eps && eps_stop_epoch == l
         norm(prev_A - A_s2, "fro");
         eps_stop_epoch = i;
+        final_iteration = i;
     end
     
     if xi ~= 0 && norm(prev_H - H_s2, "fro") < xi && xi_stop_epoch == l
         norm(prev_H - H_s2, "fro");
         xi_stop_epoch = i;
+        final_iteration = i;
     end
 
     %% Save results for the plots.
@@ -262,7 +267,7 @@ if verbose == 1
     if lambda_u ~= 0 && lambda_v ~= 0
         optimal_norms = [ norm(opt_A, "fro"), norm_opt_U, norm_opt_V];
     else
-        optimal_norms = [norm(opt_A, "fro")];
+        optimal_norms = [ norm(opt_A, "fro"), 0, 0];
     end
     
     norms_history = [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story H_s1_norm_story H_s2_norm_story];
@@ -272,10 +277,12 @@ if verbose == 1
     disp([ "Loss", norm(A - A_s2, "fro") + U_penalty + V_penalty]);
     disp([ "Gap", norm(opt_A - A_s2, "fro")]);
     disp([ "Relative Gap", norm(opt_A - A_s2, "fro")/norm(opt_A, "fro")]);
-    
-    dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
-    dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
+end 
 
+%% Todo integrate the filename dynamic into the verbose parametere i.e vernose neither 0 or 1.
+if nargin > 8 && filename ~= 0
+   %dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
+   %dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
 end
 
 %% Adjust return values in case of bias
@@ -288,3 +295,6 @@ end
 if nargin > 6
     U = V_enc;
 end
+
+final_loss = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
+final_gap = norm(opt_A - A_s2);
