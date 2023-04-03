@@ -45,7 +45,7 @@ value2test('m_range') = [100, 150, 200];
 value2test('n_range') = [50, 100];
 value2test('k_range') = [5, 20, 30];
 value2test('d_range') = 1;
-value2test('reg_parameter')  = [0.5, 0.5];
+value2test('reg_parameter')  = [0, 0];
 value2test('stop_parameter') = [500, 1e-6, 1e-12];
 
 if experiment == "dist"
@@ -54,7 +54,7 @@ if experiment == "dist"
     
 elseif experiment == "sparse"
     value2test('type') = experiment;
-    value2test('param') = 1;
+    value2test('param') = 0.5;
 
 elseif experiment == "orth"
     value2test('type') = experiment;

@@ -236,8 +236,8 @@ for i = 1:l
         loss_v(i) = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
 
         %% Stepwise Gap
-        gap_u(i) = norm(opt_A - A_s1);
-        gap_v(i) = norm(opt_A - A_s2);
+        gap_u(i) = norm(opt_A - A_s1, "fro");
+        gap_v(i) = norm(opt_A - A_s2, "fro");
 
         %% Norms of factors and approximations
         u_norm_story(i) = norm(U, "fro");
@@ -276,14 +276,17 @@ if verbose == 1
 
     disp([ "Loss", norm(A - A_s2, "fro") + U_penalty + V_penalty]);
     disp([ "Gap", norm(opt_A - A_s2, "fro")]);
-    disp([ "Relative Gap", norm(opt_A - A_s2, "fro")/norm(opt_A, "fro")]);
+
+    %disp([ "Relative Gap", norm(opt_A - A_s2, "fro")/norm(opt_A, "fro")]);
+    %dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
+    %dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
 end 
 
 %% Todo integrate the filename dynamic into the verbose parametere i.e vernose neither 0 or 1.
-if nargin > 8 && filename ~= 0
+%if nargin > 8 && filename ~= 0
    %dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
    %dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
-end
+%end
 
 %% Adjust return values in case of bias
 if  nargin > 6 && bias == 2
@@ -297,4 +300,4 @@ if nargin > 6
 end
 
 final_loss = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
-final_gap = norm(opt_A - A_s2);
+final_gap = norm(opt_A - A_s2, "fro");

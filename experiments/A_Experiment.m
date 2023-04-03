@@ -35,31 +35,26 @@ value2test = containers.Map;
 
 if experiment == "sparsity"
     
-    value2test('type') = experiment;
-    value2test('m_range') = [10:10:20];
-    value2test('n_range')  = [10:10:20];
-    value2test('k_min') = 4;
-    value2test('k_max') = 4;
-    value2test('k_stride') = 8;
-    value2test('k_limits') = [2,9];
-    value2test('d_range')  = 0.5:0.5:1; 
-    value2test('reg_parameter')  = [1, 1];
-    value2test('stop_parameter') = [500, 10e-3, 10e-5, 10];
     
+    value2test('type') = experiment;
+    value2test('m_range') = [100, 150, 200];
+    value2test('n_range') = [50, 100];
+    value2test('k_range') = [5, 20, 30];
+    value2test('d_range') = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
+    value2test('reg_parameter')  = [0.0, 0.0];
+    value2test('stop_parameter') = [500, 1e-6, 1e-12];
     ExecuteExperiment(value2test);
+    
     
 elseif experiment == "shape"
 
     value2test('type') = experiment;
-    value2test('m_range') = cat(2, [10, 50],[100:50:250]);
-    value2test('n_range')  =  cat(2, [10, 50],[100:50:250]);
-    value2test('k_min') = 50; 
-    value2test('k_max') = 200;
-    value2test('k_stride') = 50;
-    value2test('k_limits') = [2];
+    value2test('m_range') = [55:10:250];
+    value2test('n_range')  =  [150];
+    value2test('k_range') = [50];
     value2test('d_range')  = [1]; 
-    value2test('reg_parameter')  = [1, 1];
-    value2test('stop_parameter') = [2000, 0, 1e-6, 50];
+    value2test('reg_parameter')  = [0, 0];
+    value2test('stop_parameter') = [500, 1e-6, 1e-12];
 
     ExecuteExperiment(value2test);
 

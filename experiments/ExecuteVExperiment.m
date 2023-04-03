@@ -38,9 +38,6 @@ time_repetita = 5;
 % total number of considered combinations
 [~, tot_combinations] = size(combs);
 
-% total number of executions 
-%tot_executions = time_repetita * tot_combinations;
-
 % show progress bar
 wb = waitbar(0,'Start executing '+type+' esperiment');
 
@@ -66,7 +63,7 @@ for j = 1:tot_combinations
     A = Initialize_A(m, n);
     
     % compute optimal values
-    [opt_A, ~, ~] = optimalK(A, k, reg_parameter(1), reg_parameter(2));
+    [ ~,opt_A, ~] = optimalK(A, k, reg_parameter(1), reg_parameter(2));
     
     % inizialize variable for analyze required time and obtained solution 
     l = zeros(time_repetita,1);

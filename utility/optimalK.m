@@ -30,8 +30,6 @@ function [error, M, factors_norms] = optimalK (A, k, lambda_u, lambda_v)
 
 
 if nargin < 3 || ( lambda_u == 0 && (nargin == 3 || lambda_v == 0))
-    %lambda_u = 0;
-    %lambda_v = 0;
 
     % compute SVD
     [U, S, V] = svd(A);
