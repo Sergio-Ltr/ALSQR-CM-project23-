@@ -136,7 +136,7 @@ if verbose == 1
      if nargin < 9
         %% TODO redefine optimalK in order to not return opt_err anymore. 
         [~, opt_A, factors] = optimalK(A, k, lambda_u, lambda_v);
-        if lambda_u ~= 0 && lambda_v ~= 0
+        if lambda_u ~= 0 || lambda_v ~= 0
             norm_opt_U = factors(1);
             norm_opt_V = factors(2);
         end
@@ -236,15 +236,15 @@ for i = 1:l
         loss_v(i) = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
 
         %% Stepwise Gap
-        gap_u(i) = norm(opt_A - A_s1, "fro");
-        gap_v(i) = norm(opt_A - A_s2, "fro");
+        gap_u(i) = norm(opt_A - A_s1);
+        gap_v(i) = norm(opt_A - A_s2);
 
         %% Norms of factors and approximations
         u_norm_story(i) = norm(U, "fro");
         v_norm_story(i) = norm(V, "fro");
     
-        R_U_norm_story(i) = norm(R_U);
-        R_V_norm_story(i) = norm(R_V);
+        R_U_norm_story(i) = norm(R_U, "fro");
+        R_V_norm_story(i) = norm(R_V, "fro");
     
         H_s1_norm_story(i) = norm(H_s1, "fro");
         H_s2_norm_story(i) = norm(H_s2 , "fro");
@@ -264,7 +264,7 @@ end
 
 %% Call the plotting functions.
 if verbose == 1  
-    if lambda_u ~= 0 && lambda_v ~= 0
+    if lambda_u ~= 0 || lambda_v ~= 0
         optimal_norms = [ norm(opt_A, "fro"), norm_opt_U, norm_opt_V];
     else
         optimal_norms = [ norm(opt_A, "fro"), 0, 0];
