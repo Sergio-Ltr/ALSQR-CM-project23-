@@ -56,7 +56,7 @@ end
 if nargin > 0
      
     nexttile;
-    plot(loss(:,1));
+    semilogy(loss(:,1));
     hold on
 
     if eps_stop ~= l
@@ -70,7 +70,7 @@ if nargin > 0
     title('Loss step 1');
 
     nexttile;
-    plot(loss(:, 2));
+    semilogy(loss(:, 2));
     hold on 
 
     if eps_stop ~= l
@@ -85,7 +85,7 @@ if nargin > 0
     loss_history = [loss(:,1) loss(:,2)]';   
     nexttile;
 
-    plot(loss_history(:));
+    semilogy(loss_history(:));
     hold on 
 
     scatter(eps_stop*2,loss_history(2,eps_stop), "o");
@@ -102,7 +102,7 @@ if nargin > 1
     %convergence_history = log(convergence_history);
     
     nexttile;
-    plot(gap(:, 1));
+    semilogy(gap(:, 1));
     hold on
 
     if eps_stop~=1
@@ -115,7 +115,7 @@ if nargin > 1
     title('Gap at step 1');
 
     nexttile;
-    plot(gap(:, 2));
+    semilogy(gap(:, 2));
     hold on
 
     if eps_stop ~= l
@@ -131,7 +131,7 @@ if nargin > 1
 
     nexttile;
     %residual at step 1
-    plot(gap_history(:));
+    semilogy(gap_history(:));
     hold on
     if eps_stop ~= l
         scatter(eps_stop*2,gap_history(2,eps_stop), "o");
