@@ -49,35 +49,11 @@ else
     % If we ssek the regularized optimal solution, idea is to use a more
     % reliable solver like the matlab "optimproblem" toolbox. 
 
-    reg_prob = optimproblem();
+    [U,V,error] = ExternalSolver(A, k, lambda_u, lambda_v);
+
+    M = U*V';
     
-    m = size(A, 1);
-    n = size(A, 2);
-
-    U = optimvar('U',m, k);
-    V = optimvar('V',n, k);
-
-    reg_prob.Objective = norm(A - U*V') + lambda_u*norm(U) + lambda_v*norm(V);
-    
-    % Provide some initial pointsd
-    X0.V = randn(n,k); 
-    X0.U = randn(m,k);  
-
-    options = optimoptions("fminunc");
-
-    options.MaxIterations = 1000;
-    options.StepTolerance = 1e-06;
-    options.OptimalityTolerance = 1.000e-06; 
-
-    solution = solve(reg_prob, X0, Options=options); 
-
-    U_opt = solution.U; 
-    V_opt = solution.V;
-
-    M = U_opt*V_opt';
-    error = norm(A - M, "fro") + lambda_u*norm(U_opt, "fro") + lambda_v*norm(V_opt, "fro");
-
-    factors_norms = [norm(solution.U, "fro"), norm(solution.V,"fro")];
+    factors_norms = [norm(U, "fro"), norm(V,"fro")];
 end
 
 

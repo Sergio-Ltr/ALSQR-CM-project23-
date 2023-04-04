@@ -10,7 +10,7 @@
 %  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi])
 %  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi], V_0)
 %  [U,V] = Solver(A, k, [lambda_u, lambda_v], [max_epoch, eps, xi], V_0, verbosity)
-%  [
+% 
 %   
 %% Description
 %
@@ -236,8 +236,8 @@ for i = 1:l
         loss_v(i) = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
 
         %% Stepwise Gap
-        gap_u(i) = norm(opt_A - A_s1, "fro")/norm("fro");
-        gap_v(i) = norm(opt_A - A_s2, "fro")/norm("fro");
+        gap_u(i) = norm(opt_A - A_s1, "fro")/norm(opt_A, "fro");
+        gap_v(i) = norm(opt_A - A_s2, "fro")/norm(opt_A, "fro");
 
         %% Norms of factors and approximations
         u_norm_story(i) = norm(U, "fro");
@@ -269,8 +269,7 @@ if verbose == 1
     else
         optimal_norms = [ norm(opt_A, "fro"), 0, 0];
     end
-    gap_u = gap_u / norm(opt_A, "fro");
-    gap_v = gap_v / norm(opt_A, "fro");
+
     norms_history = [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story H_s1_norm_story H_s2_norm_story];
 
     Plotter([loss_u loss_v], [gap_u gap_v], norms_history, optimal_norms, [eps_stop_epoch, xi_stop_epoch]);
@@ -285,8 +284,8 @@ end
 
 %% Todo integrate the filename dynamic into the verbose parametere i.e vernose neither 0 or 1.
 %if nargin > 8 && filename ~= 0
-    dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
-    dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
+    %dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
+    %dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
 %end
 
 %% Adjust return values in case of bias
@@ -296,7 +295,7 @@ if  nargin > 6 && bias == 2
     [V, ~] =  ApproximateV(A, U, lambda_v, 2);
 end
 
-if nargin > 6
+if nargin > 6 && bias ~= 0
     U = V_enc;
 end
 
