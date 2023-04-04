@@ -57,6 +57,8 @@ if nargin > 0
      
     nexttile;
     semilogy(loss(:,1));
+    xlabel('Iterations')
+    ylabel('Loss')
     hold on
 
     if eps_stop ~= l
@@ -71,6 +73,8 @@ if nargin > 0
 
     nexttile;
     semilogy(loss(:, 2));
+    xlabel('Iterations')
+    ylabel('Loss')
     hold on 
 
     if eps_stop ~= l
@@ -80,12 +84,14 @@ if nargin > 0
     if xi_stop ~= l
         scatter(xi_stop, loss(eps_stop,4), "x");
     end
-    title('Loss step 2');
+    title('Loss');
 
     loss_history = [loss(:,1) loss(:,2)]';   
     nexttile;
 
     semilogy(loss_history(:));
+    xlabel('Iterations')
+    ylabel('Loss')
     hold on 
 
     scatter(eps_stop*2,loss_history(2,eps_stop), "o");
@@ -103,6 +109,8 @@ if nargin > 1
     
     nexttile;
     semilogy(gap(:, 1));
+    xlabel('Iterations')
+    ylabel('Relative Gap')
     hold on
 
     if eps_stop~=1
@@ -112,10 +120,12 @@ if nargin > 1
     if xi_stop ~= l
         scatter(xi_stop, gap(xi_stop,1), "x");
     end
-    title('Gap at step 1');
+    title('Relative Gap at step 1');
 
     nexttile;
     semilogy(gap(:, 2));
+    xlabel('Iterations')
+    ylabel('Relative Gap')
     hold on
 
     if eps_stop ~= l
@@ -126,12 +136,14 @@ if nargin > 1
         scatter(xi_stop, gap(xi_stop,2), "x");
     end
 
-    title('Gap at step 2 V');
+    title('Relative Gap');
     gap_history = gap';
 
     nexttile;
     %residual at step 1
     semilogy(gap_history(:));
+    xlabel('Iterations')
+    ylabel('Relative Gap')
     hold on
     if eps_stop ~= l
         scatter(eps_stop*2,gap_history(2,eps_stop), "o");
@@ -139,7 +151,7 @@ if nargin > 1
     if xi_stop ~= l
         scatter(xi_stop*2,gap_history(2,xi_stop), "x");
     end
-    title('Full Gap');
+    title('Full RelativeGap ');
 end 
 
 
@@ -150,6 +162,8 @@ if nargin > 2
 
     nexttile;
     plot(norms_history(:, 1));
+    xlabel('Iterations')
+    ylabel('Frobenius Norm')
     %hold on
     %plot(norms_history(:, 3), "m");
     hold on
@@ -168,6 +182,8 @@ if nargin > 2
 
     nexttile;
     plot(norms_history(:, 2));
+    xlabel('Iterations')
+    ylabel('Frobenius Norm')
     %hold on 
     %plot(norms_history(:, 4), "m");
     hold on 
@@ -193,6 +209,8 @@ if nargin > 2
     hold on
 
     plot(H_norm(:), "m");
+    xlabel('Iterations')
+    ylabel('Frobenius Norm')
     hold on
 
     if eps_stop ~= l

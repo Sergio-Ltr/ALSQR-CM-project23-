@@ -269,7 +269,8 @@ if verbose == 1
     else
         optimal_norms = [ norm(opt_A, "fro"), 0, 0];
     end
-    
+    gap_u = gap_u / norm(opt_A, "fro");
+    gap_v = gap_v / norm(opt_A, "fro");
     norms_history = [u_norm_story v_norm_story R_U_norm_story R_V_norm_story A1_norm_story A2_norm_story H_s1_norm_story H_s2_norm_story];
 
     Plotter([loss_u loss_v], [gap_u gap_v], norms_history, optimal_norms, [eps_stop_epoch, xi_stop_epoch]);
