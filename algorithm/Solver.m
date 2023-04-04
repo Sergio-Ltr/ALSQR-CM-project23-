@@ -300,4 +300,8 @@ if nargin > 6
 end
 
 final_loss = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
-final_gap = norm(opt_A - A_s2, "fro");
+if verbose ~= 0
+    final_gap = norm(opt_A - A_s2, "fro");
+else
+    final_gap = 0;
+end
