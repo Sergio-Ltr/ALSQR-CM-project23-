@@ -9,6 +9,7 @@
 % [filter_k_range] = generateKrange (m,n, initial_values, k_stride, k_possible_max)
 %
 %% Description
+%
 % This function compute a range of suitable value for k, given m, n,
 % desidered min value of k, derisered stride of the range and the possible
 % max k value.
@@ -23,9 +24,14 @@
 % k_stride : desired stride for the range of k values
 % k_possible_max : max value of k 
 %
+%% Output
+%
+% filter_k_range = [k_1, k_2, k_3, k_4 .... k_i]
+%
 %% Examples
 %
 % [filter_k_range] = generateKrange (200, 300, 10, 20, 190)
+%
 %% ---------------------------------------------------------------------------------------------------
 function [filter_k_range] = generateKrange (m,n, initial_values, k_stride, k_possible_max)
 

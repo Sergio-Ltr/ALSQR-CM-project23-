@@ -46,7 +46,7 @@ if nargin < 3 || ( lambda_u == 0 && (nargin == 3 || lambda_v == 0))
     % compute SVD
     [U, S, V] = svd(A);
     
-    %obtain Truncated SVD
+    % obtain Truncated SVD
     U = U(:, 1:k);
     S = S(1:k,1:k);
     V = V(:, 1:k);
@@ -57,8 +57,9 @@ if nargin < 3 || ( lambda_u == 0 && (nargin == 3 || lambda_v == 0))
     % Compute optimal error
     error = norm(A-M, "fro");
     factors_norms = [];
+
 else
-    % If we ssek the regularized optimal solution, idea is to use a more
+    % If we seek the regularized optimal solution, idea is to use a more
     % reliable solver like the matlab "optimproblem" toolbox. 
 
     [U,V,error] = ExternalSolver(A, k, lambda_u, lambda_v);

@@ -1,12 +1,16 @@
-%% ExecuteTimeExperiment 
+%% Execute Experiment Time
+%
 % This function is defined for performing time efficiency experiments with
 % respect to:
 % 1) Our ThinQR vs. lecture course FullQR vs. matlab ThinQR
 % 2) Our ALS-QR vs. matlab Truncated SVD
+%
 %% Syntax
-% ExecuteTimeExperiment(values)
+%
+% [] = ExecuteExperiment_Time(values)
 %
 %% Description
+%
 % Given all the possible parameter values  this function compute all possible
 % combinations of them and solve the problem with respect to each
 % combinations.  All the results obtained with each combinations are saved
@@ -26,21 +30,37 @@
 %    (id, mean_solver_time_elapsed, std_solver_time_elapsed, mean_svd_time_elapsed, std_svd_time_elapsed)
 %
 %% Parameters 
-%  values : map.container previuosly defined in Time_Experiments.m
+%  
+% The function ExecuteExperiment_A has a unique parameter "values" which
+% define the parameter values for ALSQR algorithm.
+%  - values : map.container previuosly defined in Experiment_Time.m
+%
+%% Output 
+%
+% No explicit output are avaible. The result of the experiments will be saved
+% in the corresponding csv file:
+%   - {...}_experiments_Properties.csv and {...}_experiments_Result.csv
+%   - {...}_experiments_Properties.csv and {...}_experiments_Result.csv     
+%
 %% Examples
 %
-% [] = ExecuteTimeExperiment(values)
+% ExecuteExperiment_Time(values)
+%
 %% ------------------------------------------------------------------------
-function [] = ExecuteTimeExperiment(values)
 
+function [] = ExecuteExperiment_Time(values)
+
+% declaring experimental type (es. "ALSQR_time")
 type = values('type');
+
+% get all possible values combinations
 combs = GetCombinations(values);
 
-% compute total number of executions and combinations
+% repeat each combination 5 times
 time_repetita = 5; 
-[~, tot_combinations] = size(combs);
-%tot_executions = time_repetita * tot_combinations;
 
+% total number of considered combinations
+[~, tot_combinations] = size(combs);
 
 wb = waitbar(0,'Start executing '+type+' esperiment');
 
@@ -97,7 +117,7 @@ for j = 1:tot_combinations
     
             tic 
             % solve the problem with our algorithm
-            [~,~] = OptSolver(A, k, stop_parameter, 1); 
+            [~, ~, ~, ~, ~] = Solver(A, k, reg_parameter, stop_parameter, Initialize_V(n,k));
             %appA = U*V';        
             solver_time_elapsed(i) = toc;
 
@@ -107,7 +127,6 @@ for j = 1:tot_combinations
             U = U(:, 1:k);
             S = S(1:k,1:k);
             V = V(:, 1:k);
-            %appA  = U*S*V';
             % compute time required          
             svd_time_elapsed(i) = toc; 
 
