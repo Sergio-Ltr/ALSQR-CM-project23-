@@ -1,21 +1,30 @@
 %% MNIST_Loader
-% Function for reading MNIST dataset - both training and test set. 
+%
+% Load the MNIST dataset - both the training and the test set. 
+%
 %% Syntax
 %
 % [training, test] = MNIST_Loader(digits) 
+%
 %% Description
+%
 % Function has different reading option: you can read the whole dataset 
 % (data for all digits) if no parameter are passed or
 % the dataset filter by a single digits.
 % 
 %% Parameters 
-%  digits : (optional) is a number between 0 and 9 that indicates the
-%  portion of dataset you want to read, related to that specific digits. 
+%
+%  digits : (optional) is a vector of numbers between 0 and 9 that indicates the
+%  portion of dataset you want to read, related to those specific digits. 
 %
 %% Examples
-% If you want to read all dataset regarding digits 4 
-% digits = 4;
-% [training, test] = MNIST_Loader(digits) 
+% 
+% Load the whole dataset.
+% [tr, ts] = MNIST_Loader()
+%
+% Load all the images of the digit 4. 
+% [4_training, 4_test] = MNIST_Loader([4])
+%
 %% ------------------------------------------------------------------------
 
 function [training, test] = MNIST_Loader(digits) 
@@ -28,6 +37,7 @@ function [training, test] = MNIST_Loader(digits)
         %Compute a mask corresponding to the digit indexes
         tr_indexes = (ismember(data.training.labels, digits));
         ts_indexes = (ismember(data.test.labels, digits));
+        
         %Apply the mask to images and labels for both test and training set.
         training.images = reshape(data.training.images(:,:,tr_indexes), 28*28,[]);
         training.labels = data.training.labels(tr_indexes);

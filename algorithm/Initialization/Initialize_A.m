@@ -40,26 +40,32 @@
 
 function [A] = Initialize_A (m, n, constraint_key, param)
     
+% Random initialization. 
 mat = randn(m, n);
 
-%Constraint application the A matrix. 
-
+%Constraint application to the A matrix. 
 if nargin > 2
-    if constraint_key == "dist" %second item is distribution type (i.e. "normal"). Possibilities here: 
+
+    % Sample values from a probability distribution.
+    if constraint_key == "dist" 
+        % Second item is distribution type (i.e. "normal").
+        % Possibilities here:  https://it.mathworks.com/matlabcentral/fileexchange/7309-randraw
         dist_key = char(param(1));
         dist_type = cell2mat(param(2:end));
         values = randraw(dist_key, dist_type, m*n);
         mat = reshape(values, [m,n]);
-    
-    elseif  constraint_key == "sparse" %second item is density coefficient 0 < d < 1.  
-        d = 0.5;
+
+    % Sample random values according to a density coefficient.
+    elseif  constraint_key == "sparse" 
+        % Second item is density coefficient 0 < d < 1.  
+        d = 0.5; 
         if param > 0 && param <= 1
             d = param;
         end
         mat = full(sprandn(m, n, d));
-    
-    %elseif  constraint_key == "symm"
-        %mat = orth(mat); % output a matrix of orthogonal rows 
+
+    % Other possible initialization can be added here
+    % ................................................ 
     end  
 end
 
