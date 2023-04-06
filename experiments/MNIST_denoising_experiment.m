@@ -88,11 +88,7 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
         %Greedy Biased ALS
         [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0], V_0, 0, 2);
         %Encoder Forward propagation 
-        if lambda_u == 0
-            U = [ones(size(A_ts,1),1),A_ts]*v_enc;
-        else
-            U = [ones(size(A_ts,1),1),A_ts]*v_enc(1:size(A_ts,2)+1,:);
-        end
+        U = [ones(size(A_ts,1),1),A_ts]*v_enc;
         %Decoder Forward propagation 
         A_rec = [ones(size(U,1),1),U]*v_dec';
 
@@ -103,11 +99,9 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
         %Unbiased ALS
         [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 3);
         %Encoder Forward propagation 
-        if lambda_u == 0
-            U = A_ts*v_enc;
-        else
-            U = A_ts*v_enc(1:size(A,2),:);
-        end
+
+        U = A_ts*v_enc;
+
         %Decoder Forward propagation 
         A_rec = U*v_dec';
        

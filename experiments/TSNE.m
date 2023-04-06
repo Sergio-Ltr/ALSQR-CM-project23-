@@ -1,8 +1,8 @@
 %% TSNE
 %
 % This function aims to compare the hidden representation resulting from
-% different AE training like back-propagation, unbiased ALS-QR, Fully biased 
-% ALS-QR and Greedy Biased ALS-QR. 
+% different AE training like back-propagation, unbiased QR-ALS, Fully biased 
+% QR-ALS and Greedy Biased QR-ALS. 
 %
 %% Syntax
 %
@@ -15,8 +15,8 @@
 % 
 % We exploits tsne algorithm in order to visualize difference between the hidden 
 % representation learned in the hidden layer (i.e. V matrix aka V encoded 
-% matrix ) throughtout severals training algorithm: back-propagation, unbiased ALS-QR, 
-% Fully biased ALS-QR and Greedy Biased ALS-QR. 
+% matrix ) throughtout severals training algorithm: back-propagation, unbiased QR-ALS, 
+% Fully biased QR-ALS and Greedy Biased QR-ALS. 
 %
 %% Parameters 
 %
@@ -71,7 +71,7 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
     if lambda_u == 0
         U_als = A_ts*v_enc;
     else
-        U_als = A_ts*v_enc(1:size(A,2),:);
+        U_als = A_ts*v_enc(1:size(A_ts,2),:);
     end
 
     ALS_ne = tsne(U_als);
@@ -82,11 +82,7 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
     %"Fully Biased ALS Embeddings"
     [v_enc, ~] = Solver(A_tr', k, [lambda_u, lambda_v], [epochs, 0, 0 ], Initialize_V(784, k), 0, 1);
 
-    if lambda_u == 0
-        U_als = [ones(size(A_ts,1),1),A_ts]*v_enc;
-    else
-        U_als = [ones(size(A_ts,1),1),A_ts]*v_enc(1:size(A,2),:);
-    end
+    U_als = [ones(size(A_ts,1),1),A_ts]*v_enc;
 
     ALS_ne = tsne(U_als);
     subplot(2,2,3)
@@ -96,11 +92,9 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
     %"Greedy  Biased ALS Embeddings"
     [v_enc, ~] = Solver(A_tr', k, [lambda_u, lambda_v], [epochs, 0, 0 ], Initialize_V(784, k), 0, 2);
 
-    if lambda_u == 0
-        U_als = [ones(size(A_ts,1),1),A_ts]*v_enc;
-    else
-        U_als = [ones(size(A_ts,1),1),A_ts]*v_enc(1:size(A,2),:);
-    end
+
+    U_als = [ones(size(A_ts,1),1),A_ts]*v_enc;
+
     
     ALS_ne = tsne(U_als);
     subplot(2,2,4)
