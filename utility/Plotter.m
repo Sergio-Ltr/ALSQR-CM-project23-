@@ -6,7 +6,9 @@
 %
 % Plotter(loss)
 % Plotter(loss, gap)
-% Plotter(loss, gap, norms_history)
+% Plotter(loss, gap, norms_history
+% Plotter(loss, gap, norms_history, opt_norms)
+% Plotter(loss, gap, norms_history, opt_norms, stop_points)
 %
 %% Description
 %
@@ -15,35 +17,40 @@
 %
 %% Parameters 
 %
-% residual_history: a couple of l dimensional vector, first for subproblem 
-%   (1) and second for subproblem (2). They both contain the normalized 
-%   errors after each LLS solution step.   
+% loss: a couple of l dimensional vector, first for subproblem 
+%   (1) and second for subproblem (2). They both contain the values of the 
+%   loss after each LLS solution step.   
 %
-% convergence_history: a couple of l dimensional vector, first for 
+% gap: a couple of l dimensional vector, first for 
 %   subproblem (1) and second for subproblem (2), containing the
-%   convergence rate computed after each update. 
+%   relative gap computed after each LLS solution step. 
 %
 % norms_history: contains four l dimensional vectors, the first two are ones 
 %   containing values of the Froious norm of the U and V matrix respctively, 
 %   computed at each step after the update, while the last two contain 
 %   the value of the frobenious norm of U_s*V_S'.
 %   
-% norm_opt_A: scalar corresponding to the frobenious norm of the k-truncated 
+% norm_opt_solutions: scalar corresponding to the frobenious norm of the k-truncated 
 %   SVD of A (aka optimal solution of low rank approximation).  
 % 
+% stop_points: a vector of two elements, first one is the point of trigger
+%   of the epsilon criteria, second one is the trigger point of the xi stop.  
+%
 %% Examples
 %
-% Plotter(residual_history)
-% Plotter(residual_history, convergence_history)
-% Plotter(residual_history, convergence_history, norms_history)
-% Plotter(residual_history, convergence_history, norms_history, norm_opt_A)
+% Plotter(loss)
+% Plotter(loss, gap)
+% Plotter(loss, gap, norms_history)
+% Plotter(loss, gap, norms_history, norm_opt_solutions, stop_points)
 %
 %% ---------------------------------------------------------------------------------------------------
+
 function[] = Plotter(loss, gap, norms_history, norm_opt_solutions, stop_points)
 tiledlayout(nargin,3);
 
 l = size(norms_history,1);
 
+% If stop points are not present, they coincide with the last iteration. 
 if nargin > 5 
     eps_stop = stop_points(1);
     xi_stop = stop_points(2);
@@ -52,7 +59,7 @@ else
     xi_stop = l;
 end
 
-%First plot: Approximation of losses
+%First plot: Loss
 if nargin > 0
      
     nexttile;
@@ -61,6 +68,7 @@ if nargin > 0
     ylabel('Loss')
     hold on
 
+    % Plot the stop indicators
     if eps_stop ~= l
         scatter(eps_stop, loss(eps_stop,1), "o");
     end
@@ -69,7 +77,7 @@ if nargin > 0
         scatter(xi_stop, loss(eps_stop,3), "x");
     end
 
-    title('Loss step 1');
+    title('Loss step (1)');
 
     nexttile;
     semilogy(loss(:, 2));
@@ -77,6 +85,7 @@ if nargin > 0
     ylabel('Loss')
     hold on 
 
+    % Plot the stop indicators    
     if eps_stop ~= l
         scatter(eps_stop, loss(eps_stop,2), "o");
     end
@@ -84,7 +93,7 @@ if nargin > 0
     if xi_stop ~= l
         scatter(xi_stop, loss(eps_stop,4), "x");
     end
-    title('Loss');
+    title('Loss step (2)');
 
     loss_history = [loss(:,1) loss(:,2)]';   
     nexttile;
@@ -102,17 +111,16 @@ if nargin > 0
 end 
 
 
-%Second plot: Relative gap rate through iterations
+%Second plot: Relative gap
 if nargin > 1
-   
-    %convergence_history = log(convergence_history);
-    
+
     nexttile;
     semilogy(gap(:, 1));
     xlabel('Iterations')
     ylabel('Relative Gap')
     hold on
 
+    % Plot the stop indicators
     if eps_stop~=1
         scatter(eps_stop, gap(eps_stop,1), "o");
     end
@@ -120,7 +128,7 @@ if nargin > 1
     if xi_stop ~= l
         scatter(xi_stop, gap(xi_stop,1), "x");
     end
-    title('Relative Gap at step 1');
+    title('Relative Gap at step (1)');
 
     nexttile;
     semilogy(gap(:, 2));
@@ -128,6 +136,7 @@ if nargin > 1
     ylabel('Relative Gap')
     hold on
 
+    % Plot the stop indicators
     if eps_stop ~= l
         scatter(eps_stop, gap(eps_stop,2), "o");
     end
@@ -136,18 +145,20 @@ if nargin > 1
         scatter(xi_stop, gap(xi_stop,2), "x");
     end
 
-    title('Relative Gap');
+    title('Relative Gap at step (2)');
     gap_history = gap';
 
     nexttile;
-    %residual at step 1
     semilogy(gap_history(:));
     xlabel('Iterations')
     ylabel('Relative Gap')
     hold on
+
+    % Plot the stop indicators
     if eps_stop ~= l
         scatter(eps_stop*2,gap_history(2,eps_stop), "o");
     end
+
     if xi_stop ~= l
         scatter(xi_stop*2,gap_history(2,xi_stop), "x");
     end
@@ -155,23 +166,23 @@ if nargin > 1
 end 
 
 
-%Third plot: Param matrices norms through iterations
+%Third plot: Norms
 if nargin > 2
-
-    %norms_history = log(norms_history);
 
     nexttile;
     plot(norms_history(:, 1));
     xlabel('Iterations')
     ylabel('Frobenius Norm')
-    %hold on
-    %plot(norms_history(:, 3), "m");
     hold on
-    scatter(eps_stop, norms_history(eps_stop,1), "o");
+    
+    % Plot the stop indicators
+    if eps_stop ~= l
+        scatter(eps_stop, norms_history(eps_stop,1), "o");
+    end
+
     if xi_stop ~= l
         scatter(xi_stop, norms_history(xi_stop,3), "x");
     end
-
 
     if  nargin > 3 && size(norm_opt_solutions, 2) > 1
         plot( ones(l)*norm_opt_solutions(2), 'g');
@@ -184,16 +195,17 @@ if nargin > 2
     plot(norms_history(:, 2));
     xlabel('Iterations')
     ylabel('Frobenius Norm')
-    %hold on 
-    %plot(norms_history(:, 4), "m");
     hold on 
+
+    % Plot the stop indicators
     if eps_stop ~= l
         scatter(eps_stop, norms_history(eps_stop,2), "o");
     end
     if xi_stop ~= l
         scatter(xi_stop, norms_history(xi_stop,4), "x");
     end
-
+    
+    % Plot optimal norm
     if  nargin > 3 && size(norm_opt_solutions, 2) > 1
         plot( ones(l)*norm_opt_solutions(3), 'g');
         hold on
@@ -202,6 +214,7 @@ if nargin > 2
     title('V-norm');
 
     nexttile;
+
     A_history = [norms_history(:, 5), norms_history(:, 6)]';
     H_norm = [norms_history(:, 7), norms_history(:, 8)]'; 
 
@@ -224,12 +237,12 @@ if nargin > 2
     hold on
    
 
-    %If provided, also plot a constant corresponding to the 
+    % If provided, also plot a constant corresponding to the 
     % norm of the optimal solution, showing if it is approached.
 
     if nargin > 3
         plot( ones(l*2)*norm_opt_solutions(1), 'g');
     end
 
-    title('A norm');
+    title('A_s norm');
 end
