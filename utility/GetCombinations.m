@@ -1,7 +1,7 @@
 %% GetCombinations 
 % 
-% Get combinations of parameter values to test during experimental phase,
-% given all the paramter and their values that must be considered.
+% Given all the ALSQR paramter and their possible values, get combinations
+% of parameter values to test during experimental phase.
 %
 %% Syntax
 %  
@@ -11,7 +11,8 @@
 % 
 % Given the required parameter and their possibile value, the function
 % compute all possible combinations of parameter values.
-% it is useful in performing experiments with more combinations. 
+% it is useful in performing experiments with more combinations of parameter values.
+%
 %% Parameters 
 % values: Container of all parameter and corresponding value to be tested
 % 
@@ -31,9 +32,22 @@
 %   - value('d_range')  = [min values : stride : max value]
 %   - value('reg_parameter')  = [1, 1];
 %   - value('stop_parameter') = [max epochs, epsilon, xi, patience]
+%
+% 
+%% Output 
+%
+% combinations: (cell array) each row rapresent a single
+% combinations of parameter values to be tested. Each column rapresent a
+% parameter. 
+%
+% combination = { [m_1, n_1, k_1, d_1, max_epoch_1, eps_1, xi_1, lambdaU_1, lambdaV_1]
+%                 [m_2, n_2, k_2, d_2, max_epoch_2, eps_2, xi_2, lambdaU_2, lambdaV_2]
+%                 ...
+%                 [m_i, n_i, k_i, d_i, max_epoch_i, eps_i, xi_i, lambdaU_i, lambdaV_i] }
+%
 %% Examples
 % 
-% prepare container of parameters and values
+% prepare container of parameters and their values
 %
 % values('type') = "sparse"
 % value('m_range') = [10:10:20];
@@ -48,7 +62,9 @@
 %
 % get all the possible combinations of paramter values
 % [combinations] = GetCombinations(values)
+%
 %% ---------------------------------------------------------------------------------------------------
+
 function [combinations] = GetCombinations(values)
 
 % inizialize a list of all possible combinations
@@ -56,7 +72,7 @@ combinations = {};
 
 if length(values)==3
 
-     % read possible values for each variable
+    % read possible values for each variable
     m_range = values('m_range');
     n_range = values('n_range');
     
@@ -74,23 +90,24 @@ else
     % read possible values for each variable
     m_range = values('m_range');
     n_range = values('n_range');
-    %{
-    k_min   = values('k_min');
-    k_max   = values('k_max');
-    k_stride = values ('k_stride');
-    k_limits = values ('k_limits');
-    %}
-    k_range = values('k_range');
     stop = values('stop_parameter');
     reg  = values ('reg_parameter');
-    
     if isKey(values, "d_range") == true
         d_range  = values('d_range'); 
+    end
+    if isKey(values, "k_range") == true
+        k_range  = values('k_range'); 
+    else
+        k_min   = values('k_min');
+        k_max   = values('k_max');
+        k_stride = values ('k_stride');
+        k_limits = values ('k_limits');
+        k_range = generateKrange(m,n, cat(2, k_limits, k_min), k_stride, k_max);
+
     end
     
     for m = m_range
         for n = n_range
-            %k_range = generateKrange(m,n, cat(2, k_limits, k_min), k_stride, k_max);
             for k = k_range
                 for d = d_range
                     % add a single combination  to the list of all possible combinations

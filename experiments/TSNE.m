@@ -26,8 +26,15 @@
 % - noise : white gaussian noise to be added to dataset
 % - epochs : max number of iteration to be performed
 %
+%% Output 
+%
+%  Errors at the last epochs achived by AE, Fully biased ALS, Greedy biased
+%  ALS and unbiased ALS.
+% 
 %% Examples
+%
 % TSNE(10, 0.2, 0.2, 0, 1000)
+%
 %% ------------------------------------------------------------------------
 function TSNE(k, lambda_u, lambda_v, noise, epochs)
     rng default % for reproducibility
