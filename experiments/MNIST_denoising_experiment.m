@@ -70,7 +70,7 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
 
 
         %Fully Biased Error
-        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 1);
+        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0], V_0, 0, 1);
         
         %Encoder Forward propagation
         if lambda_u == 0
@@ -86,7 +86,7 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
         subplot(d,4,2+4*i), imshow(reshape(A_rec(18,:),[28,28])*255);
 
         %Greedy Biased ALS
-        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 2);
+        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0], V_0, 0, 2);
         %Encoder Forward propagation 
         if lambda_u == 0
             U = [ones(size(A_ts,1),1),A_ts]*v_enc;
@@ -101,7 +101,7 @@ function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
 
 
         %Unbiased ALS
-        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 0);
+        [v_enc, v_dec] = Solver(A_tr, k, [lambda_u, lambda_v], [epochs, 0, 0, 0], V_0, 0, 3);
         %Encoder Forward propagation 
         if lambda_u == 0
             U = A_ts*v_enc;

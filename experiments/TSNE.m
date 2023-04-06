@@ -66,7 +66,7 @@ function TSNE(k, lambda_u, lambda_v, noise, epochs)
     title('AE Embeddings')
 
     %"Unbiased ALS Embeddings"
-    [v_enc, ~] = Solver(A_tr', k, [lambda_u, lambda_v], [epochs, 0, 0 ], Initialize_V(784, k), 0, 0);
+    [v_enc, ~] = Solver(A_tr', k, [lambda_u, lambda_v], [epochs, 0, 0 ], Initialize_V(784, k), 0, 3);
 
     if lambda_u == 0
         U_als = A_ts*v_enc;
