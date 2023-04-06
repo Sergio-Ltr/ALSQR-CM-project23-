@@ -25,9 +25,6 @@
 %
 % param: possible additional value(s) for the constrained configuaration. 
 %
-% biased: secify if the matrix should be used for a biaed training process.
-%   Each constraint handles differently the additoonal biases row.
-%
 %% Possible Constraint Keys
 %
 % - "dist": 
@@ -76,49 +73,51 @@
 %
 %% --------------------------------------------------------------------------------------
 
-function [V] = Initialize_V (n, k, constraint_key, param, biased)
+function [V] = Initialize_V (n, k, constraint_key, param)
     
 mat = randn(n,k);
-
-% Biased default to false
-if nargin < 5
-   biased = false;
-end
-
-% @TODO, only if not costrainde, else handle sepearatley.
-if biased
-    k = k +1;
-end
 
 %Constraint application the V_0 matrix. 
 if nargin > 2
     
+    % Sample values from a probability distribution.
     if constraint_key == "dist" %second item is distribution type (i.e. "normal"). Possibilities here: 
+        % Second item is distribution type (i.e. "normal").
+        % Possibilities here:  https://it.mathworks.com/matlabcentral/fileexchange/7309-randraw
         dist_key = char(param(1));
         dist_type = cell2mat(param(2:end));
         values = randraw(dist_key, dist_type, n*k);
         mat = reshape(values, [n,k]);
 
+    % Sample random values according to a density coefficient.
     elseif  constraint_key == "sparse" %second item is density coefficient 0 < d < 1.  
+        % Second item is density coefficient 0 < d < 1.  
         d = 0.5;
         if param > 0 && param < 1
             d = param;
         end
         mat = full(sprandn(n, k, d)); % = Vo (starting point) 
     
+    % Build the matrix stacking orthonormal columns.
     elseif  constraint_key == "orth"
-        mat = orth(randn(n,k));% output a matrix of orthogonal columns. 
+        mat = orth(randn(n,k));
     
+    % Build the matrix mutlipying an n x r and a r x k matrix, with r < k < n.
     elseif  constraint_key == "low_rank"
+        % resulting matrix will have rank r by construction.  
+        % default r value is k -1. 
         r = k - 1;
         if param > 1 && param < k
             r = param;
         end
-        mat = randn(n,r)*rand(r,k); % resulting matrix will have rank r by construction.  
+        mat = randn(n,r)*rand(r,k);
 
+    % Build a matrix of all 1/k valued elements (equal weigth or probability 
+    % to each feature). Such initializiation is rank deficient as well. 
     elseif constraint_key == "uniform"
         mat = 1/k * ones(n,k);
     
+    % Build the matrix sampling zeros and one according to a d coefficient.
     elseif constraint_key == "feature-selection"
         d = 0.5;
         if param > 0 && param < 1
@@ -126,9 +125,15 @@ if nargin > 2
         end
         mat = full(sprandn(n, k, d)) ~= 0; % = Vo (starting point) 
         mat = double(mat);
+        
+    % Sample random values and then normalize in order to have sum to one
+    % columns, representing probabilites or weighted contribution. 
     elseif constraint_key == "prob"
         mat = rand(n,k);
         mat = mat./sum(mat);
+    
+    % Other possible initialization can be added here
+    % ................................................ 
     end  
 end
 
