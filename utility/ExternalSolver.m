@@ -1,3 +1,29 @@
+%% ExternalSolver 
+%
+% Compute the optimal solution for a regularized low rank approximation
+% problem.
+%
+%% Syntax 
+%
+% [U,V,error] = ExternalSolver(A, k, lambda_u, lambda_v); 
+%
+%% Description 
+%
+% Call the matlab Optimization Toolbox to solve the regularized (P). 
+% Solution is expressed in the bilinear form. 
+% Error is usally comparable to the optimal one if lambdas are 0. 
+% 
+% The Frobenious norm cannot be used directly with this solver (in the
+% objective), anyway the returned solutions always scores good results in
+% terms of loss expressed in Frobenious norm: they are always better then our regularized
+% algorithm results in terms of penalized loss. 
+%
+%% Examples
+%
+% [U,V,error] = ExternalSolver(A, k, 0, 0) <- Solve without regularization (like with SVD but bilinear); 
+% [U,V,error] = ExternalSolver(A, k, 0.5, 0.2) Solve the regularized problem, balancing U and V. 
+%
+% -----------------------------------------------------------------------------------------------
 function [U_opt, V_opt, error] = ExternalSolver(A,k, lambda_u, lambda_v)
 
     reg_prob = optimproblem();

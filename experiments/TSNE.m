@@ -27,7 +27,9 @@
 % - epochs : max number of iteration to be performed
 %
 %% Examples
+%
 % TSNE(10, 0.2, 0.2, 0, 1000)
+%
 %% ------------------------------------------------------------------------
 function TSNE(k, lambda_u, lambda_v, noise, epochs)
     rng default % for reproducibility

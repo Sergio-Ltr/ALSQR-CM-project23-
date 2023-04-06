@@ -19,8 +19,8 @@
 %
 % loss: a couple of l dimensional vector, first for subproblem 
 %   (1) and second for subproblem (2). They both contain the values of the 
-%   loss after each LLS solution step.   
-%
+%   loss after each LLS solution step.  
+%   
 % gap: a couple of l dimensional vector, first for 
 %   subproblem (1) and second for subproblem (2), containing the
 %   relative gap computed after each LLS solution step. 
@@ -29,6 +29,8 @@
 %   containing values of the Froious norm of the U and V matrix respctively, 
 %   computed at each step after the update, while the last two contain 
 %   the value of the frobenious norm of U_s*V_S'.
+%   Additionally, values of the approximation of the norms comute with the
+%   norm of the R matrices can be passed appended in this history vector.  
 %   
 % norm_opt_solutions: scalar corresponding to the frobenious norm of the k-truncated 
 %   SVD of A (aka optimal solution of low rank approximation).  
@@ -170,9 +172,14 @@ end
 if nargin > 2
 
     nexttile;
+    % Plot the norm of U.
     plot(norms_history(:, 1));
     xlabel('Iterations')
     ylabel('Frobenius Norm')
+    hold on
+
+    % Plot also the norm of R_U
+    plot(norms_history(:, 3), "m");
     hold on
     
     % Plot the stop indicators
@@ -192,10 +199,14 @@ if nargin > 2
     title('U-norm');
 
     nexttile;
+    %Plot the norm of V
     plot(norms_history(:, 2));
     xlabel('Iterations')
     ylabel('Frobenius Norm')
     hold on 
+
+    % Plot also the norm of R_U
+    plot(norms_history(:, 4), "m");
 
     % Plot the stop indicators
     if eps_stop ~= l
@@ -214,18 +225,19 @@ if nargin > 2
     title('V-norm');
 
     nexttile;
-
+    % Plot the norm of A. 
     A_history = [norms_history(:, 5), norms_history(:, 6)]';
-    H_norm = [norms_history(:, 7), norms_history(:, 8)]'; 
-
     plot(A_history(:))
     hold on
 
+    % Plot the norm of R_U*R_V' (approximation for the xi stop criteria).
+    H_norm = [norms_history(:, 7), norms_history(:, 8)]'; 
     plot(H_norm(:), "m");
     xlabel('Iterations')
     ylabel('Frobenius Norm')
     hold on
 
+    % Plot the stop indicators
     if eps_stop ~= l
         scatter(eps_stop*2, A_history(2, eps_stop), "o")
     end
@@ -239,7 +251,6 @@ if nargin > 2
 
     % If provided, also plot a constant corresponding to the 
     % norm of the optimal solution, showing if it is approached.
-
     if nargin > 3
         plot( ones(l*2)*norm_opt_solutions(1), 'g');
     end

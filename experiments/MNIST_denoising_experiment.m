@@ -1,15 +1,23 @@
 %% MNIST_denoising_experiment
-% this function aims to perform denoising experiments on MNIST dataset with AE classical training and with ALS-QR in different version.
+%
+% this function aims to perform denoising experiments on MNIST dataset with 
+% AE classical training and with ALS-QR in different version.
+%
 %% Syntax
+%
 % MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
+%
 %% Description
+%
 % In this experiments :
 % - a general AE is fitted on TR dataset, and evaluated on TS dataset
 % - ALS QR algorithm in both unbiased, fully biased and greedy biased is
 % used on TR set to learn a V encoded rapresentation of the dataset. 
 % the experiments want to highlight the ability to faster achive a low
 % error in the first epoch using ALS-QR method.
+%
 %% Parameters 
+%
 % % -  k: rank for the low rank approximation problem 
 % - lambda_u : thikonov paramter for U matrix
 % - lambda_v : thikonov paramter for V matrix
@@ -17,8 +25,11 @@
 % - epochs : max number of iteration to be performed
 % - digits: choose digits in order to select portion of the dataset to
 % focus on
+%
 %% Examples
+%
 %  MNIST_denoising_experiment(32, 0.2, 0.2, 0, 3)
+%
 %% ------------------------------------------------------------------------
 function MNIST_denoising_experiment(k, lambda_u, lambda_v, noise, digit)
     

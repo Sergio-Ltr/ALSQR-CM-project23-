@@ -85,6 +85,12 @@ V_enc = V_enc';
 % (m x n) * (n x k) matrix multiplication.
 U = A * V_enc;
 
+if bias == 1 || bias == 2
+    V_enc = V_enc(1:n+1,:);
+else
+    V_enc = V_enc(1:n,:);
+end
+
 % Also compute the step-wise approximation of A.
 A_s = U*V(1:n,:)';
 
