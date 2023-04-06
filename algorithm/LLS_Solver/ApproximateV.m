@@ -35,6 +35,19 @@
 %   - value = 1, size(V) = [n+1,k] ) - Encoder biased V
 %   - value = 2, size(V) = [n,k+1] ) - Decoder biased V
 %
+%% Output 
+%
+% V: The new approximation of the V matrix
+%
+% A_s: The step wise approximation: the product of the new V and the U
+%      passed as input parameter.
+%
+% Q: The Q factor of U Useful when the computation of an approximated k-SVD
+%       is required.
+%
+% R: The R factor of U. Useful when the computation of an approximated k-SVD
+%       is required.
+%
 %% Examples
 %
 % Approximate V(A, U_current) 
@@ -45,11 +58,11 @@
 
 function [V, A_s, Q, R] = ApproximateV (A, U, lambda, bias)
 
-opt.UT = true;
-[m, k] = size (U);  % U size = m x k
+ % U size = m x k
+[m, k] = size (U); 
 [~, n]  = size (A); 
 
-%% Prepare to compute V_enc
+%  Prepare to compute V_enc
 if nargin > 3 && bias == 1
     A = [ones(m,1), A];
     n = n + 1;
@@ -58,32 +71,36 @@ if nargin > 3 && bias == 1
     % V_enc = Q(:,1:k) * inv(R(1:k,1:k)')
 end
 
-%% Prepare to compute V_dec
+% Prepare to compute V_dec
 if nargin > 3 && bias == 2
     U = [ones(m,1), U];
     k = k + 1;
     % In this case V_dec = V_biased
 end
 
-%% Applying Ridge Regression
+% Applying Ridge Regression
 if lambda ~= 0
     U = [U; lambda * eye(k)];
     A = [A; zeros(k,n)]; 
 end
 
-%% LLS Solver with QR
-Vt = zeros(k,n);
+% LLS Solver with QR
+V = zeros(k,n);
 
+% Use our QR implementation to solve the sub-problem.
 [Q, R] = ThinQRfactorization(U);
-%[Q,R] = qr(U, 0);
 
+% Solve the LLS computing the inverse of R w.r.t. Q for the columns of A. 
+opt.UT = true;
 for i = 1:n
     a = A(:, i);
-    [x, ~] = linsolve(R, Q'*a, opt);
-    Vt(:,i) = x;
+    V(:,i) = linsolve(R, Q'*a, opt);
 end
-V = Vt';
 
+% Return the transpose solution. 
+V = V';
+
+% Also compute the step-wise approximation of A.
 A_s = U(1:m,:)*V';
 
 
