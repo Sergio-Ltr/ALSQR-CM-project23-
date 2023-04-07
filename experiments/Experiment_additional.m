@@ -61,12 +61,12 @@ Solver(A, k, lambdas, [500, 0, 0], V5, 1, 0, 'V0_prob.csv', opt_A);
 
 % ALSQR with different lambda parameter among iterations
 
-[~, ~, ~] = Solver (A, k, [0.0, 0.0], [1000, 0, 0], V0, 1, 0, 'reg00.csv');
-[~, ~, ~] = Solver (A, k, [0.2, 0.2], [1000, 0, 0], V0, 1, 0, 'reg02.csv');
-[~, ~, ~] = Solver (A, k, [0.4, 0.4], [1000, 0, 0], V0, 1, 0, 'reg04.csv');
-[~, ~, ~] = Solver (A, k, [0.6, 0.6], [1000, 0, 0], V0, 1, 0, 'reg06.csv');
-[~, ~, ~] = Solver (A, k, [0.8, 0.8], [1000, 0, 0], V0, 1, 0, 'reg08.csv');
-[~, ~, ~] = Solver (A, k, [1.0, 1.0], [1000, 0, 0], V0, 1, 0, 'reg10.csv');
+[~, ~, ~, ~, ~] = Solver (A, k, [0.0, 0.0], [1000, 0, 0], V0, 1, 0, 'reg00.csv');
+[~, ~, ~, ~, ~] = Solver (A, k, [0.2, 0.2], [1000, 0, 0], V0, 1, 0, 'reg02.csv');
+[~, ~, ~, ~, ~] = Solver (A, k, [0.4, 0.4], [1000, 0, 0], V0, 1, 0, 'reg04.csv');
+[~, ~, ~, ~, ~] = Solver (A, k, [0.6, 0.6], [1000, 0, 0], V0, 1, 0, 'reg06.csv');
+[~, ~, ~, ~, ~] = Solver (A, k, [0.8, 0.8], [1000, 0, 0], V0, 1, 0, 'reg08.csv');
+[~, ~, ~, ~, ~] = Solver (A, k, [1.0, 1.0], [1000, 0, 0], V0, 1, 0, 'reg10.csv');
 
 % SPARSITY OF A among iterations 
 
@@ -76,11 +76,11 @@ A06 = Initialize_A(m,n,"sparse", 0.6);
 A08 = Initialize_A(m,n,"sparse", 0.8);
 A10 = Initialize_V(m,n,"sparse", 1.0);
 
-[~, ~, ~] = Solver (A02, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse02.csv');
-[~, ~, ~] = Solver (A04, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse04.csv');
-[~, ~, ~] = Solver (A06, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse06.csv');
-[~, ~, ~] = Solver (A08, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse08.csv');
-[~, ~, ~] = Solver (A10, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse10.csv');
+[~, ~, ~, ~, ~] = Solver (A02, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse02.csv');
+[~, ~, ~, ~, ~] = Solver (A04, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse04.csv');
+[~, ~, ~, ~, ~] = Solver (A06, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse06.csv');
+[~, ~, ~, ~, ~] = Solver (A08, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse08.csv');
+[~, ~, ~, ~, ~] = Solver (A10, k, lambdas, [1000, 0, 0], V0, 1, 0, 'Asparse10.csv');
 
 
 fprintf("Experiments successfully completed")
