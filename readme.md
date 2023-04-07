@@ -2,12 +2,10 @@
 
 The current repository contains the MATLAB files involved in the implementation of the project 23(NON-ML)
 
-```math
-(P) is a low rank approximation of a matrix A \in xxz\mathbb{R}^{m \times n}$, i.e.,
-\[ \argmin_{U \in \mathbb{R}^{m \times k}, V\in \mathbb{R}^{n \times k}} 
-\| A - UV^T \|_F
-\]
-(A) is alternating optimization: first take an initial  $V=V_0$, and compute \( U_{1} = \argmin_{U} \| A - UV^{T}_{0}\|_F\), then use it to compute \(V_{1} = \argmin_{V} \|A - U_{1}V^{T}\|_{F} \), then \(U_{2} = \argmin_{U} \| A - UV^{T}_{1}\|_{F} \), and so on, until (hopefully) convergence. Use QR factorization to solve these sub-problems.
+```
+(P) is a low rank approximation of a matrix $` A \in xxz\mathbb{R}^{m \times n}`$:
+$` \argmin_{U \in \mathbb{R}^{m \times k}, V\in \mathbb{R}^{n \times k}} \| A - UV^T \|_F`$
+(A) is alternating optimization: first take an initial  $`V=V_0`$, and compute $` U_{1} = \argmin_{U} \| A - UV^{T}_{0}\|_F`$, then use it to compute $`V_{1} = \argmin_{V} \|A - U_{1}V^{T}\|_{F} `$, then $`U_{2} = \argmin_{U} \| A - UV^{T}_{1}\|_{F} `$, and so on, until (hopefully) convergence. Use QR factorization to solve these sub-problems.
 ```
 
 ## Quick Start
