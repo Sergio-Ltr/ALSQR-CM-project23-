@@ -53,7 +53,7 @@ tiledlayout(nargin,3);
 l = size(norms_history,1);
 
 % If stop points are not present, they coincide with the last iteration. 
-if nargin > 5 
+if nargin > 4 
     eps_stop = stop_points(1);
     xi_stop = stop_points(2);
 else 
@@ -76,7 +76,7 @@ if nargin > 0
     end
 
     if xi_stop ~= l
-        scatter(xi_stop, loss(eps_stop,3), "x");
+        scatter(xi_stop, loss(eps_stop,1), "x");
     end
 
     title('Loss step (1)');
@@ -93,7 +93,7 @@ if nargin > 0
     end
 
     if xi_stop ~= l
-        scatter(xi_stop, loss(eps_stop,4), "x");
+        scatter(xi_stop, loss(eps_stop,2), "x");
     end
     title('Loss step (2)');
 
