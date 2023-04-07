@@ -9,8 +9,9 @@
 %  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v])
 %  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v], [max_iter, eps, xi])
 %  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v], [max_iter, eps, xi], V_0)
-%  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v], [max_iter, eps, xi], V_0, verbosity)
-%  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v], [max_iter, eps, xi], V_0, verbosity, opt_a, opt_norms+)
+%  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v], [max_iter, eps, xi], V_0, verbose)
+%  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v], [max_iter, eps, xi], V_0, verbose, bias)
+%  [U,V, iteration, loss, gap] = Solver(A, k, [lambda_u, lambda_v], [max_iter, eps, xi], V_0, verbose, bias, opt_a, opt_norms)
 % 
 %% Description
 %
@@ -21,7 +22,7 @@
 % default values are applied here. 
 % 
 % Values used to generate the plots are collected here and passed to the
-% plotter function (unless verbosity is disabled). 
+% plotter function (unless verbose is disabled). 
 %
 %% Parameters 
 % 
@@ -39,8 +40,8 @@
 %
 % initial_V: The V_0 matrix to use at the very first iteration to compute U_1.
 %
-% verbosity: wether we want or not plots and logs to be computed and displayed. 
-%   - value = 0: No plots and logs at all. 
+% verbose: wether we want or not plots and logs to be computed and displayed. 
+%   - value = 0: No plots and logs at all.  Gap is not computed. 
 %   - value = 1: The plots are displayed and some message is printed on the
 %   console.
 %   - value = 2: Everything is displayed as if value was 1, additionaly
@@ -94,22 +95,22 @@
 %
 %  A = randn(500, 12)
 %  V_0 = ones(12, 12)
-
+%
 %  [U,V] = Solver(A, 8) <- Default config: No regularization, 100 iters 
 %   without early stopping, random (full column rank) initial V_0, verbose
 %  
 %  [U,V] = Solver(A, 8, [0.5, 0.5]) <- Custom Regularization 
-
+%
 %  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0]) <- Custom Stopping
 %   criterisa: 200 iters, no early stopping.
-
+%
 %  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0], V_0) <- Custom Initial V
-
+%
 %  [U,V] = Solver(A, 8, [0.5, 0.5], [200, 0, 0], V_0, 0) <- Non verbose 
 %  
 %% ---------------------------------------------------------------------------------------------------
 
-function [U, V, final_iteration, final_loss, final_gap] = Solver (A, k, reg_parameter, stop_param, initial_V, verbosity, bias, opt_A, opt_norms)
+function [U, V, final_iteration, final_loss, final_gap] = Solver (A, k, reg_parameter, stop_param, initial_V, verbose, bias, opt_A, opt_norms)
 
 m = size(A,1);
 n = size(A,2);
@@ -156,12 +157,13 @@ else
     V = Initialize_V(n, k); 
 end
 
-if nargin > 5 && verbosity == 0
-    % Not verbose only if specified. 
-    verbose = 0;
-else
-    % Default behaviour is verbose. 
+% If not specified, algorithm is verbose. 
+if nargin < 6 
     verbose = 1;
+end
+
+if nargin <= 6 
+    bias = 0;
 end
 
 if nargin > 6 && bias == 1
@@ -321,8 +323,8 @@ if verbose ~= 0
     disp([ "Gap", norm(opt_A - A_s2, "fro")]);
 end 
 
-%% If verbosity is neither 0 or 1, it's expected to be the name of the file on wich results will be saved.
-if verbosity ~= 0 && verbosity ~= 1
+%% If verbose is neither 0 or 1, it's expected to be the name of the file on wich results will be saved.
+if verbose ~= 0 && verbose ~= 1
     filename = "results.csv";
     dlmwrite(filename,[optimal_norms],'delimiter',',','-append');
     dlmwrite(filename,[loss_u, loss_v, gap_u, gap_v, u_norm_story, v_norm_story, A1_norm_story, A2_norm_story],'delimiter',',','-append');
@@ -345,14 +347,14 @@ end
 final_loss = norm(A_s2 - A, "fro") + V_penalty + U_penalty;
 
 % Return gap if it was computed, else return Inf. 
-if verbose ~= 0
+if verbose ~= 0 || nargin > 7 
     final_gap = norm(opt_A - A_s2, "fro");
-else
+else 
     final_gap = Inf;
 end
 
 %% Truncated SVD biasing. 
-if bias == 4
+if  nargin > 6 && bias == 4
     % Save "classical" approximation in the second return value
     V = containers.Map({'U', 'V'},  {U, V});
     

@@ -92,7 +92,7 @@ for j = 1:tot_combinations
         else
              V0 = Initialize_V(n,k);
         end
-        [~,~, l(i), loss(i), gap(i)] = Solver(A, k, reg_parameter, stop_parameter, V0, 0, 0, 0, opt_A);
+        [~,~, l(i), loss(i), gap(i)] = Solver(A, k, reg_parameter, stop_parameter, V0, 0, 0, opt_A);
         rel_gap(i) = gap(i)/ norm(opt_A, "fro");
 
     end

@@ -52,7 +52,7 @@ time_repetita = 5;
 % total number of considered combinations
 [~, tot_combinations] = size(combs);
 
-wb = waitbar(0,'Start executing '+type+' esperiment');
+wb = waitbar(0, 'Start executing '+ type +' esperiment');
 
 for j = 1:tot_combinations
     

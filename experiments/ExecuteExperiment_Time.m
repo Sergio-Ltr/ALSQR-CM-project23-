@@ -104,8 +104,8 @@ for j = 1:tot_combinations
         n = combs{j}(2);
         k = combs{j}(3);
         d = combs{j}(4);
-        reg_parameter  = [combs{j}(9),combs{j}(10)];
-        stop_parameter = [combs{j}(5),combs{j}(6), combs{j}(7), combs{j}(8)];
+        reg_parameter  = [combs{j}(8),combs{j}(9)];
+        stop_parameter = [combs{j}(5),combs{j}(6), combs{j}(7)];
 
         solver_time_elapsed = zeros(time_repetita,1);
         svd_time_elapsed  = zeros(time_repetita,1);
@@ -117,7 +117,7 @@ for j = 1:tot_combinations
     
             tic 
             % solve the problem with our algorithm
-            [~, ~, ~, ~, ~] = Solver(A, k, reg_parameter, stop_parameter, Initialize_V(n,k));
+            [~, ~, ~, ~, ~] = Solver(A, k, reg_parameter, stop_parameter, Initialize_V(n,k), 0);
             %appA = U*V';        
             solver_time_elapsed(i) = toc;
 
