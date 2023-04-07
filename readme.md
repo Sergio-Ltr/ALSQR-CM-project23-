@@ -50,9 +50,34 @@ The randraw.m file is the implementation  `Alex Bar Guy  &  Alexander Podgaetsky
 We do not own that code, and its use in the project was minimun (it's more an extra feature for future experiments). 
 
 All the remaining files were implemented from scratches.  
-Feel free to contact us for any information or suggestion. 
 
-Irene Pisani:   i.pisani1@studenti.unipi.it
-Sergio Latrofa: s.latrofa1@studenti.unipi.it
+## Experimental set-up and result
+
+In `experiments` folder are stored all the scripts useful for reproducing our experiments; you can use the following commands to run experiments  
+
+* `Experiment_A("shape")`   
+    It run experiment wrt to different A dimensions/shape;
+
+* `Experiment_A("sparsity")`    
+    It run experiments wrt to different sparse matrix A;
+
+* `Experiment_V("sparse")`  
+    It run experiments with  different initialization of matrix V (you can replace the paramter "sparse" with other type of avaialable intiliazation accuratly described in the file documentation and comments);
+
+* `Experiment_Time("ALSQR_time")` 
+    It run experiment regarding time_efficiency of our solver wrt matalab implememtation of SVD;
+
+* `Experiment_Time("ALSQR_time")` 
+    It run experiment regarding time efficiency of our solver wrt matalab implememtation of our ThinQR factorization wrt our FullQR and matlab ThinQR.
+
+Note that by opening file `Experiment_Time.m`, `Experiment_V.m`, `Experiment_A.m`, you can modified the parameter like  stopping condition parameter, Thikonov parameter, dimension and shape you want to try, in order to arrange them according with your needs.
+
+The results of our experiment are avaiable at the following Google Drive shared link: https://drive.google.com/drive/folders/10mFGBTKXmi-9MzdD4eTtgZ4XGMwh0z_N?usp=sharing 
+
+All the results have been further explored and analyzed in the following Python Notebook (avaible at: https://colab.research.google.com/drive/1Vlv3R4xuTw8bvUMkNSLhheq1B4AULveW?usp=sharing ), in order to evaluate the performance obtained using graphs and charts produced with pandas and matplotlib. 
 
 
+### Author 
+
+> Irene Pisani:   i.pisani1@studenti.unipi.it   
+> Sergio Latrofa: s.latrofa1@studenti.unipi.it
